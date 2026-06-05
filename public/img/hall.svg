@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Castle great hall interior">
+  <defs>
+    <pattern id="bricks" width="160" height="80" patternUnits="userSpaceOnUse">
+      <rect width="160" height="80" fill="#473c6b"/>
+      <rect width="160" height="6" y="0"  fill="#2a2247"/>
+      <rect width="160" height="6" y="40" fill="#2a2247"/>
+      <rect width="6" height="40" x="0"   y="0"  fill="#2a2247"/>
+      <rect width="6" height="40" x="80"  y="0"  fill="#2a2247"/>
+      <rect width="6" height="40" x="40"  y="40" fill="#2a2247"/>
+      <rect width="6" height="40" x="120" y="40" fill="#2a2247"/>
+    </pattern>
+    <radialGradient id="warm" cx="50%" cy="42%" r="60%">
+      <stop offset="0%"  stop-color="#ff8a3c" stop-opacity="0.28"/>
+      <stop offset="45%" stop-color="#ff2e88" stop-opacity="0.10"/>
+      <stop offset="100%" stop-color="#ff2e88" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="torchGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#ff9a3c" stop-opacity="0.5"/>
+      <stop offset="100%" stop-color="#ff9a3c" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <rect width="1600" height="900" fill="#140a26"/>
+
+  <!-- A shallow hall: large near-flat back wall, thin side walls for a hint of
+       depth. Vanishing point ~ (800, 410). -->
+
+  <!-- CEILING (shallow) -->
+  <polygon points="0,0 1600,0 1230,120 370,120" fill="#180f2c"/>
+  <polygon points="0,0 370,120 430,104 90,0" fill="#241a3e" opacity="0.6"/>
+  <polygon points="1600,0 1230,120 1170,104 1510,0" fill="#241a3e" opacity="0.6"/>
+
+  <!-- LEFT WALL (thin) -->
+  <polygon points="0,0 370,120 370,690 0,900" fill="#241d40"/>
+  <g stroke="#150d26" stroke-width="3" opacity="0.5">
+    <line x1="0" y1="220" x2="370" y2="270"/>
+    <line x1="0" y1="470" x2="370" y2="440"/>
+    <line x1="0" y1="740" x2="370" y2="600"/>
+  </g>
+
+  <!-- RIGHT WALL (thin) -->
+  <polygon points="1600,0 1230,120 1230,690 1600,900" fill="#2a2148"/>
+  <g stroke="#150d26" stroke-width="3" opacity="0.5">
+    <line x1="1600" y1="220" x2="1230" y2="270"/>
+    <line x1="1600" y1="470" x2="1230" y2="440"/>
+    <line x1="1600" y1="740" x2="1230" y2="600"/>
+  </g>
+
+  <!-- FLOOR (shallow flagstones in perspective) -->
+  <polygon points="370,690 1230,690 1600,900 0,900" fill="#241d3c"/>
+  <g stroke="#140f28" stroke-width="3" opacity="0.55">
+    <line x1="800" y1="690" x2="120" y2="900"/>
+    <line x1="800" y1="690" x2="470" y2="900"/>
+    <line x1="800" y1="690" x2="800" y2="900"/>
+    <line x1="800" y1="690" x2="1130" y2="900"/>
+    <line x1="800" y1="690" x2="1480" y2="900"/>
+  </g>
+  <g stroke="#140f28" stroke-width="3" opacity="0.45">
+    <line x1="330" y1="752" x2="1270" y2="752"/>
+    <line x1="220" y1="820" x2="1380" y2="820"/>
+    <line x1="100" y1="888" x2="1500" y2="888"/>
+  </g>
+
+  <!-- BACK WALL (large, lit stone bricks) -->
+  <rect x="370" y="120" width="860" height="570" fill="url(#bricks)"/>
+  <rect x="370" y="120" width="860" height="570" fill="url(#warm)"/>
+  <ellipse cx="470" cy="360" rx="110" ry="160" fill="url(#torchGlow)"/>
+  <ellipse cx="1130" cy="360" rx="110" ry="160" fill="url(#torchGlow)"/>
+
+  <!-- floor line shadow where the back wall meets the floor -->
+  <rect x="370" y="684" width="860" height="10" fill="#0e0820" opacity="0.55"/>
+</svg>

@@ -26,23 +26,23 @@ function initDb() {
   // Use the default rollback journal so the database is a single "castle.db"
   // file (no -wal / -shm side-files). Fine for this tiny single-user app.
   db.pragma('journal_mode = DELETE');
-  db.pragma('foreign_keys = ON'); // actually enforce the user <-> score link
+  db.pragma('foreign_keys = ON'); // actually enforce the user <-> badges link
 
   // --- Schema ---------------------------------------------------------------
   // The "user" table holds at most two rows, both fixed by a CHECK:
   //   id 0 = "dragon" — a reserved castle character (seeded below). Not a player.
   //   id 1 = the single student who plays. Created when they enter at the gate.
-  // The "score" table links back to a user.
+  // The "badges" table records which challenges the user has earned.
   //
-  //   user                 score
-  //   ----                 -----
-  //   id (0=dragon,        id        (unique id for this challenge entry)
-  //       1=student) ◄───── user_id   (which user this score belongs to)
-  //   nickname             name      (the challenge's name)
-  //                        passed    (0 = not passed, 1 = passed)
+  //   user                 badges
+  //   ----                 ------
+  //   id (0=dragon,        id        (unique id for this badge entry)
+  //       1=student) ◄───── user_id   (which user earned this badge)
+  //   nickname             name      (the challenge's slug, e.g. cipher-dungeon)
+  //                        passed    (0 = not earned, 1 = earned)
   //
-  // A user has many score rows — one per challenge. Each challenge is simply
-  // passed or not. SQLite has no real boolean, so "passed" is an INTEGER
+  // A user has many badge rows — one per challenge. Each challenge is simply
+  // earned or not. SQLite has no real boolean, so "passed" is an INTEGER
   // limited by a CHECK to 0 or 1.
   db.exec(`
     CREATE TABLE user (
@@ -50,11 +50,11 @@ function initDb() {
       nickname TEXT    NOT NULL
     );
 
-    CREATE TABLE score (
-      id      INTEGER PRIMARY KEY AUTOINCREMENT,        -- unique challenge entry id
-      user_id INTEGER NOT NULL REFERENCES user(id),     -- links this score to a user
-      name    TEXT    NOT NULL,                         -- the challenge's name
-      passed  INTEGER NOT NULL DEFAULT 0                -- 0 = not passed, 1 = passed
+    CREATE TABLE badges (
+      id      INTEGER PRIMARY KEY AUTOINCREMENT,        -- unique badge entry id
+      user_id INTEGER NOT NULL REFERENCES user(id),     -- links this badge to a user
+      name    TEXT    NOT NULL,                         -- the challenge's slug
+      passed  INTEGER NOT NULL DEFAULT 0                -- 0 = not earned, 1 = earned
               CHECK (passed IN (0, 1))
     );
   `);
@@ -64,7 +64,7 @@ function initDb() {
   // added separately (id 1) when they enter at the gate.
   db.prepare('INSERT INTO user (id, nickname) VALUES (0, ?)').run('dragon');
 
-  console.log('🗄️  Fresh castle database created (user + score tables, dragon seeded).');
+  console.log('🗄️  Fresh castle database created (user + badges tables, dragon seeded).');
   return db;
 }
 

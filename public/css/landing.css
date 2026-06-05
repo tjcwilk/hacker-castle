@@ -1,45 +1,12 @@
 /* ==========================================================================
-   Hacker Castle — signature theme: "Synthwave Terminal".
-   A glitching CRT terminal in 80s synthwave colours (purple / pink / orange),
-   with a neon grid floor and scanlines. The castle is drawn from CSS blocks,
-   so no image assets are needed. Pixel look = blocky shapes + pixel fonts.
-
-   The :root palette below is the castle's shared identity. Future pages
-   (inside the castle, the challenge rooms) should reuse these variables so the
-   whole site looks like one place.
+   landing.css — the GATE (entry screen) only.
+   Builds on theme.css (palette, reset, base body, .glitch, .enter-btn,
+   .scanlines). Here we keep only what's specific to the landing page: the
+   sky, the CSS castle, the "playing as" status, and the gate overlay.
    ========================================================================== */
 
-:root {
-  --font-head: 'Press Start 2P', monospace;
-  --font-body: 'VT323', monospace;
-
-  /* Synthwave palette */
-  --c-purple-deep: #1a0033;
-  --c-purple:      #3d0a5b;
-  --c-magenta:     #ff2e88;
-  --c-orange:      #ff7a3c;
-  --c-yellow:      #ffe14d;
-  --c-cyan:        #29e7ff;
-  --c-text:        #f6e9ff;
-
-  /* Castle stone — cool indigo so it separates from the purple sky */
-  --stone:       #514a85;
-  --stone-light: #6a63a6;  /* top-edge highlight */
-  --stone-dark:  #211a47;  /* outlines + recesses */
-}
-
-*, *::before, *::after { box-sizing: border-box; }
-
-html, body {
-  margin: 0;
-  height: 100%;
-  overflow: hidden;
-  background: var(--c-purple-deep);
-  color: var(--c-text);
-  font-family: var(--font-body);
-  image-rendering: pixelated;        /* keep pixel edges crisp */
-  -webkit-font-smoothing: none;
-}
+/* The landing is a single, non-scrolling screen. */
+html, body { overflow: hidden; }
 
 /* --- The scene ----------------------------------------------------------- */
 .landing {
@@ -91,41 +58,16 @@ html, body {
 }
 .title span { display: block; }
 
-.tagline {
-  margin: 0;
-  font-size: clamp(1.1rem, 3vmin, 2rem);
-  letter-spacing: 0.1em;
-  color: var(--c-yellow);
-  text-shadow: 0 0 8px rgba(255, 122, 60, 0.6);
+/* The pixel font (and its jagged vertical-stripe look) is kept ONLY for the big
+   glitch title. The button and the "playing as" text use the crisp UI font so
+   they read cleanly. */
+.enter-btn,
+.player-status {
+  font-family: var(--font-ui);
+  -webkit-font-smoothing: antialiased;
+  image-rendering: auto;
 }
-
-/* --- Glitch effect on the title ----------------------------------------- */
-.glitch { position: relative; }
-.glitch::before, .glitch::after {
-  content: attr(data-text);
-  position: absolute; inset: 0;
-}
-.glitch::before { color: var(--c-magenta); transform: translate(-2px, 0); animation: glitch1 2.2s steps(2) infinite; }
-.glitch::after  { color: var(--c-cyan);    transform: translate(2px, 0);  animation: glitch2 2.6s steps(2) infinite; }
-@keyframes glitch1 { 0%,90%,100%{clip-path:inset(0 0 100% 0)} 92%{clip-path:inset(20% 0 40% 0)} 96%{clip-path:inset(60% 0 10% 0)} }
-@keyframes glitch2 { 0%,88%,100%{clip-path:inset(100% 0 0 0)} 90%{clip-path:inset(50% 0 30% 0)} 94%{clip-path:inset(10% 0 70% 0)} }
-
-/* --- Enter button -------------------------------------------------------- */
-.enter-btn {
-  font-family: var(--font-head);
-  font-size: clamp(0.7rem, 1.8vmin, 1rem);
-  padding: 1.1em 1.6em;
-  cursor: pointer;
-  color: #1a0033;
-  background: linear-gradient(180deg, var(--c-yellow), var(--c-orange) 55%, var(--c-magenta));
-  border: 0;
-  box-shadow: 6px 6px 0 #7a0a52, 0 0 22px rgba(255, 46, 136, 0.6);
-  transition: transform 0.08s steps(2), box-shadow 0.08s steps(2);
-}
-.enter-btn:active {
-  transform: translate(4px, 4px);
-  box-shadow: 2px 2px 0 #7a0a52, 0 0 22px rgba(255, 46, 136, 0.6);
-}
+.enter-btn { font-weight: 700; letter-spacing: 0.02em; }
 
 /* --- "Playing as ..." status + actions under the hero button ------------- */
 .player-status {
@@ -142,7 +84,7 @@ html, body {
   display: block;
   margin: 0.2em 0 0 1.2em;                /* slight indent */
   padding: 0;
-  font-family: var(--font-body);
+  font-family: inherit;                   /* the crisp UI font from .player-status */
   font-size: inherit;
   color: var(--c-magenta);
   background: none;
@@ -168,14 +110,6 @@ html, body {
   -webkit-mask: linear-gradient(180deg, transparent 0%, #000 55%);
           mask: linear-gradient(180deg, transparent 0%, #000 55%);
 }
-
-/* --- CRT scanlines + flicker --------------------------------------------- */
-.scanlines {
-  position: absolute; inset: 0; z-index: 4; pointer-events: none;
-  background: repeating-linear-gradient(0deg, rgba(0,0,0,0.28) 0 2px, transparent 2px 4px);
-  animation: flicker 4s steps(60) infinite;
-}
-@keyframes flicker { 97% { opacity: 1; } 98% { opacity: 0.72; } 99% { opacity: 1; } }
 
 /* ==========================================================================
    THE CASTLE  (built from blocks; injected by landing.js)
@@ -309,12 +243,12 @@ html, body {
   font-size: 0.85rem; line-height: 1.5; color: #fff; margin: 0 0 8px;
 }
 .gate-hint { color: var(--c-cyan); font-size: 1.2rem; margin: 0 0 18px; }
-#handle {
+#nickname {
   width: 100%; padding: 12px; font-family: var(--font-body); font-size: 1.4rem;
   color: var(--c-text); background: var(--c-purple-deep);
   border: 2px solid var(--c-cyan); outline: none;
 }
-#handle:focus { box-shadow: 0 0 12px var(--c-cyan); }
+#nickname:focus { box-shadow: 0 0 12px var(--c-cyan); }
 .gate-actions { display: flex; gap: 10px; margin-top: 16px; }
 .gate-actions button {
   flex: 1; padding: 12px; cursor: pointer;
@@ -326,8 +260,3 @@ html, body {
 .gate-actions button.ghost { background: #2a1247; color: #fff; box-shadow: 4px 4px 0 #11061f; }
 .gate-actions button:active { transform: translate(2px,2px); }
 .gate-result { min-height: 1.4em; margin: 14px 0 0; font-size: 1.3rem; color: var(--c-yellow); }
-
-/* Respect users who prefer less motion. */
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after { animation: none !important; }
-}

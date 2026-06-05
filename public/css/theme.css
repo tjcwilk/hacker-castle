@@ -1,0 +1,80 @@
+/* ==========================================================================
+   theme.css — Hacker Castle's shared identity.
+   Linked FIRST on every page; page-specific CSS (landing.css, great-hall.css)
+   builds on top. Holds the colour palette and the primitives reused across the
+   gate and the Great Hall so the whole castle feels like one place.
+   ========================================================================== */
+
+:root {
+  --font-head: 'Press Start 2P', monospace;
+  --font-body: 'VT323', monospace;
+  /* Clean, crisp font for small labels/buttons — the pixel fonts get fuzzy
+     (vertical-stripe look) at small sizes. Big headings keep the pixel font. */
+  --font-ui:   'Segoe UI', system-ui, -apple-system, Roboto, 'Helvetica Neue', Arial, sans-serif;
+
+  /* Synthwave palette */
+  --c-purple-deep: #1a0033;
+  --c-magenta:     #ff2e88;
+  --c-orange:      #ff7a3c;
+  --c-yellow:      #ffe14d;
+  --c-cyan:        #29e7ff;
+  --c-text:        #f6e9ff;
+
+  /* Castle stone — cool indigo so it separates from the purple sky */
+  --stone:       #514a85;
+  --stone-light: #6a63a6;  /* top-edge highlight */
+  --stone-dark:  #211a47;  /* outlines + recesses */
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  min-height: 100%;
+  background: var(--c-purple-deep);
+  color: var(--c-text);
+  font-family: var(--font-body);
+  image-rendering: pixelated;        /* keep pixel edges crisp */
+  -webkit-font-smoothing: none;
+}
+
+/* --- Reusable pixel button ----------------------------------------------- */
+.btn, .enter-btn {
+  font-family: var(--font-head);
+  font-size: clamp(0.7rem, 1.8vmin, 1rem);
+  padding: 1.1em 1.6em;
+  cursor: pointer;
+  color: #1a0033;
+  background: linear-gradient(180deg, var(--c-yellow), var(--c-orange) 55%, var(--c-magenta));
+  border: 0;
+  box-shadow: 6px 6px 0 #7a0a52, 0 0 22px rgba(255, 46, 136, 0.6);
+  transition: transform 0.08s steps(2), box-shadow 0.08s steps(2);
+}
+.btn:active, .enter-btn:active {
+  transform: translate(4px, 4px);
+  box-shadow: 2px 2px 0 #7a0a52, 0 0 22px rgba(255, 46, 136, 0.6);
+}
+
+/* --- Glitch effect on a title (needs data-text="...") -------------------- */
+.glitch { position: relative; }
+.glitch::before, .glitch::after {
+  content: attr(data-text);
+  position: absolute; inset: 0;
+}
+.glitch::before { color: var(--c-magenta); transform: translate(-2px, 0); animation: glitch1 2.2s steps(2) infinite; }
+.glitch::after  { color: var(--c-cyan);    transform: translate(2px, 0);  animation: glitch2 2.6s steps(2) infinite; }
+@keyframes glitch1 { 0%,90%,100%{clip-path:inset(0 0 100% 0)} 92%{clip-path:inset(20% 0 40% 0)} 96%{clip-path:inset(60% 0 10% 0)} }
+@keyframes glitch2 { 0%,88%,100%{clip-path:inset(100% 0 0 0)} 90%{clip-path:inset(50% 0 30% 0)} 94%{clip-path:inset(10% 0 70% 0)} }
+
+/* --- CRT scanlines + flicker (overlay) ----------------------------------- */
+.scanlines {
+  position: fixed; inset: 0; z-index: 60; pointer-events: none;
+  background: repeating-linear-gradient(0deg, rgba(0,0,0,0.28) 0 2px, transparent 2px 4px);
+  animation: flicker 4s steps(60) infinite;
+}
+@keyframes flicker { 97% { opacity: 1; } 98% { opacity: 0.72; } 99% { opacity: 1; } }
+
+/* Respect users who prefer less motion. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; }
+}

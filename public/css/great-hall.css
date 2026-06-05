@@ -1,0 +1,228 @@
+/* ==========================================================================
+   great-hall.css — The Great Hall (inside the castle) as an immersive room.
+   A subtly 3D stone hall: the Badges board on the back wall, a row of archway
+   doors along the floor, and the dragon guardian standing to the side.
+   Theme: warm torchlit stone. Builds on theme.css.
+   ========================================================================== */
+
+html, body { overflow: hidden; }
+
+/* The room's warm-stone palette (used throughout). */
+body {
+  --accent: #ffb24d;
+  --torch: #ff7a3c;
+  --board-bg: linear-gradient(180deg, #6a4a28, #43301a);
+  --board-edge: #2e1d0e;
+  --board-ink: #f3e4c6;
+  --board-title: #ffe1b0;
+  --earned-ink: #fff;
+  --input-bg: #2a1808;
+  --input-ink: #ffe9c0;
+  --door-edge: #5a4326;
+
+  /* Crisp text: --font-ui (from theme.css) + smoothing for the small labels. */
+  -webkit-font-smoothing: antialiased;   /* theme.css turns this off for the pixel look */
+  text-rendering: optimizeLegibility;
+  image-rendering: auto;                 /* smooth the room art + dragon */
+}
+
+.hall { position: fixed; inset: 0; overflow: hidden; background: #140a26; }
+.stage {
+  /* Fill the whole window. The stone-room backdrop covers it (so it always
+     fills — no black bars at any size), and the props (board, doors, dragon,
+     torches) are positioned as percentages of the WINDOW so they stay on-screen
+     however it's resized. */
+  position: absolute; inset: 0; overflow: hidden;
+  font-size: clamp(9px, 1.7vmin, 20px); /* props scale with the window */
+}
+.stage__bg {
+  position: absolute; inset: 0; z-index: 0;
+  background: #140a26 url('/img/hall.svg') center / cover no-repeat;
+  filter: sepia(0.16) saturate(1.05) brightness(1.04) hue-rotate(-12deg); /* warm it */
+}
+
+/* --- Header bits --------------------------------------------------------- */
+.hall-exit {
+  position: absolute; left: 1.4%; top: 2.5%; z-index: 8;
+  font-family: var(--font-ui); font-size: 0.85em; color: #e7d6b0; text-decoration: none; opacity: 0.85;
+}
+.hall-exit:hover { color: var(--accent); text-decoration: underline; }
+.hall-welcome {
+  position: absolute; right: 1.6%; top: 2.5%; z-index: 8; margin: 0;
+  font-family: var(--font-ui); font-size: 0.85em; color: #e7d6b0;
+}
+.hall-welcome #who { color: var(--accent); font-weight: bold; }
+
+.hall-banner {
+  position: absolute; left: 50%; top: 0.4%; transform: translateX(-50%); z-index: 7;
+  font-family: var(--font-head); font-size: 0.66em; color: #1a0033;
+  padding: 0.7em 1.5em 1.1em;
+  /* Same palette as the index "Enter the Castle" button. */
+  background: linear-gradient(180deg, var(--c-yellow), var(--c-orange) 55%, var(--c-magenta));
+  clip-path: polygon(0 0, 100% 0, 100% 70%, 50% 100%, 0 70%);
+  filter: drop-shadow(0 0.2em 0.2em rgba(0,0,0,0.5)) drop-shadow(0 0 0.5em rgba(255,46,136,0.55));
+}
+
+/* --- Wall torches -------------------------------------------------------- */
+.torch {
+  position: absolute; top: 30%; transform: translateX(-50%); z-index: 4;
+  width: 0.75%; height: 6%; background: #3a2a1a; border: 2px solid #18100a;
+}
+.torch--l { left: 28%; }
+.torch--r { left: 72%; }
+.torch i {
+  position: absolute; left: 50%; bottom: 72%; transform: translateX(-50%);
+  width: 240%; aspect-ratio: 2 / 3;
+  background: radial-gradient(ellipse at 50% 72%, #fff6c0 0%, #ffe14d 26%, var(--torch, #ff7a3c) 62%, transparent 100%);
+  border-radius: 50% 50% 50% 50% / 72% 72% 30% 30%;
+  box-shadow: 0 0 1.1em var(--torch, #ff7a3c);
+  animation: flame 0.36s steps(3) infinite alternate;
+}
+@keyframes flame { from { transform: translateX(-50%) scaleY(1); } to { transform: translateX(-50%) scaleY(1.2) translateY(-10%); } }
+
+/* --- Badges board (clean, readable, mounted on the back wall) ------------ */
+.badge-board {
+  position: absolute; left: 50%; top: 13%; transform: translateX(-50%); z-index: 6;
+  width: 33%; padding: 0.7em 0.8em 0.9em;
+  background: var(--board-bg); color: var(--board-ink);
+  border: 0.35em solid var(--board-edge); border-radius: 6px;
+  box-shadow: 0 0.7em 1.4em rgba(0,0,0,0.55);
+}
+.chain { position: absolute; top: -2.4em; width: 0.18em; height: 2.4em; background: linear-gradient(#9a9a9a, #4a4a4a); }
+.chain--l { left: 22%; transform: rotate(7deg); transform-origin: bottom; }
+.chain--r { right: 22%; transform: rotate(-7deg); transform-origin: bottom; }
+.badge-board__title {
+  margin: 0 0 0.55em; text-align: center; font-family: var(--font-ui);
+  font-weight: 800; font-size: 1.15em; color: var(--board-title); letter-spacing: 0.02em;
+}
+.badges { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.2em 0.4em; }
+.badge {
+  position: relative; overflow: visible;
+  display: flex; flex-direction: column; align-items: center; gap: 0.3em;
+  padding: 0.2em; text-align: center;
+}
+
+/* Each badge is a round medallion: a notched "rosette" rim behind a rimmed
+   disc that holds the icon. */
+.badge__icon {
+  position: relative; z-index: 1;
+  width: 2em; height: 2em; border-radius: 50%;
+  display: grid; place-items: center; font-size: 1.35em; line-height: 1;
+  border: 0.14em solid #241808;
+  box-shadow: inset 0 0.12em 0.16em rgba(255,236,180,0.3), inset 0 -0.14em 0.2em rgba(0,0,0,0.55);
+}
+.badge__icon::before {
+  content: ''; position: absolute; inset: -0.28em; border-radius: 50%; z-index: -1;
+  background: repeating-conic-gradient(var(--rim, #5e5038) 0deg 15deg, var(--rim-dark, #352a1c) 15deg 30deg);
+  filter: drop-shadow(0 0.1em 0.12em rgba(0,0,0,0.45));
+}
+.badge__name { font-family: var(--font-ui); font-weight: 600; font-size: 0.72em; line-height: 1.1; color: var(--board-ink); }
+
+/* Locked: dim bronze medallion */
+.badge.locked .badge__icon {
+  background: radial-gradient(circle at 50% 32%, #5a4a30, #2e2212);
+  --rim: #5e5038; --rim-dark: #352a1c;
+}
+.badge.locked .badge__icon, .badge.locked .badge__name { opacity: 0.6; }
+
+/* Earned: bright gold medallion, glowing, with twinkles */
+.badge.earned .badge__icon {
+  background: radial-gradient(circle at 50% 32%, #ffe9a0, #d98a2a);
+  border-color: #7a4e12; --rim: #ffd24a; --rim-dark: #c98a1a;
+  animation: badge-glow 1.8s ease-in-out infinite alternate;
+}
+.badge.earned .badge__name { color: var(--earned-ink); }
+@keyframes badge-glow {
+  from { box-shadow: inset 0 0.12em 0.16em rgba(255,243,200,0.45), inset 0 -0.14em 0.2em rgba(0,0,0,0.45), 0 0 0.3em rgba(255,207,74,0.55); }
+  to   { box-shadow: inset 0 0.12em 0.16em rgba(255,243,200,0.45), inset 0 -0.14em 0.2em rgba(0,0,0,0.45), 0 0 0.9em rgba(255,207,74,0.95); }
+}
+.badge.earned::before, .badge.earned::after {
+  content: '✦'; position: absolute; color: #ffd24a; font-size: 0.72em; z-index: 2; animation: twinkle 1.3s steps(2) infinite;
+}
+.badge.earned::before { top: -0.15em; right: 0.55em; }
+.badge.earned::after  { top: 0.9em; left: 0.6em; animation-delay: 0.6s; }
+@keyframes twinkle { 0%,100% { opacity: 0.2; transform: scale(0.7); } 50% { opacity: 1; transform: scale(1.25); } }
+.badge.just-earned .badge__icon { animation: badge-pop 0.6s steps(6); }
+@keyframes badge-pop { 0% { transform: scale(0.6) rotate(-8deg); } 60% { transform: scale(1.25) rotate(6deg); } 100% { transform: scale(1); } }
+
+.flag-form { display: flex; gap: 0.4em; margin-top: 0.7em; }
+#flag-input {
+  flex: 1; min-width: 0; padding: 0.45em 0.55em;
+  font-family: var(--font-ui); font-size: 0.82em;
+  color: var(--input-ink); background: var(--input-bg);
+  border: 2px solid var(--board-edge); outline: none;
+}
+#flag-input:focus { box-shadow: 0 0 0.5em var(--accent); }
+.flag-form .btn {
+  font-size: 0.55em; padding: 0 0.9em; box-shadow: 3px 3px 0 #00000066;
+  background: linear-gradient(180deg, #ffd27a, #d98a2a);
+}
+.flag-msg { min-height: 1.2em; margin: 0.5em 0 0; text-align: center; font-family: var(--font-ui); font-size: 0.82em; }
+.flag-msg.ok  { color: #6ad07a; }
+.flag-msg.bad { color: #d9533a; }
+.loading { margin: 0; text-align: center; font-family: var(--font-ui); font-size: 0.8em; opacity: 0.7; }
+
+/* --- Doors: a row of archways along the floor, kept left of the dragon --- */
+.doors {
+  position: absolute; left: 0; bottom: 4.5%; z-index: 3;
+  width: 100%; padding-left: 3.5%;
+  display: flex; justify-content: flex-start; align-items: flex-end; gap: 1.6%;
+}
+.door { width: 9.5%; text-decoration: none; display: flex; flex-direction: column; align-items: center; gap: 0.3em; }
+.door__frame {
+  position: relative; width: 100%; aspect-ratio: 5 / 8;
+  border: 0.18em solid var(--door-edge); border-bottom: 0;
+  border-radius: 46% 46% 5% 5% / 36% 36% 3% 3%;
+  background: #2a2238; box-shadow: inset 0 0 1em rgba(0,0,0,0.7);
+  display: flex; align-items: flex-end; justify-content: center; overflow: hidden;
+  transition: transform 0.12s, box-shadow 0.12s, border-color 0.12s;
+}
+.door__leaf {
+  position: relative; width: 76%; height: 86%;
+  background: linear-gradient(180deg, #5a3a1f, #341f0f);
+  border-radius: 42% 42% 0 0 / 26% 26% 0 0;
+  box-shadow: inset 0 0 0 0.18em rgba(0,0,0,0.3);
+}
+.door__leaf::after {
+  content: ''; position: absolute; right: 16%; top: 48%;
+  width: 9%; aspect-ratio: 1; background: #d9b25a; border-radius: 50%;
+}
+.door__plaque {
+  font-family: var(--font-ui); font-weight: 600; font-size: 0.7em; line-height: 1.1; text-align: center;
+  color: #ffe9c0; background: rgba(14,8,26,0.82); border: 1px solid rgba(255,255,255,0.18);
+  padding: 0.1em 0.5em; max-width: 150%;
+}
+.door:hover .door__frame { transform: translateY(-0.35em); box-shadow: 0 0 1.1em var(--accent), inset 0 0 1em rgba(0,0,0,0.5); border-color: var(--accent); }
+.door.done .door__frame { border-color: #6ad07a; box-shadow: 0 0 0.9em #6ad07a, inset 0 0 1em rgba(0,0,0,0.5); }
+.door.done .door__plaque::after { content: ' ✓'; color: #6ad07a; }
+
+/* --- Dragon guardian ----------------------------------------------------- */
+.dragon-spot {
+  position: absolute; right: 3.5%; bottom: 5%; z-index: 5;
+  height: 57%; display: flex; flex-direction: column; align-items: center; justify-content: flex-end;
+}
+.dragon { height: 100%; width: auto; overflow: visible;
+  --d-body: #5d6b52; --d-belly: #c9d6ad; --d-edge: #202a18; --d-spike: #d2a14a; --d-eye: #16210d; --d-wing: #495540;
+}
+.dragon-shadow {
+  width: 58%; height: 0.7em; margin-top: 0.2em; border-radius: 50%;
+  background: radial-gradient(ellipse, rgba(0,0,0,0.55), transparent 70%);
+}
+.dragon-speech {
+  position: absolute; bottom: 99%; left: 50%; transform: translateX(-50%);
+  margin: 0; max-width: 12em; text-align: center; font-family: var(--font-ui); font-size: 0.85em; line-height: 1.25;
+  color: #2a1d08; background: #f3e4c6; border: 2px solid #8a6a32; border-radius: 8px; padding: 0.4em 0.7em;
+}
+.dragon-speech::after {
+  content: ''; position: absolute; top: 100%; left: 50%; transform: translateX(-50%);
+  border: 0.5em solid transparent; border-top-color: #f3e4c6;
+}
+
+.drg      { transform-box: fill-box; transform-origin: center bottom; animation: drg-bob 3s ease-in-out infinite alternate; }
+.drg-tail { transform-box: fill-box; transform-origin: top left; animation: drg-tail 2.2s ease-in-out infinite alternate; }
+.drg-wing { transform-box: fill-box; transform-origin: bottom right; animation: drg-wing 3.4s ease-in-out infinite alternate; }
+.drg-lid  { transform-box: fill-box; transform-origin: top; transform: scaleY(0); animation: drg-blink 4.6s infinite; }
+@keyframes drg-bob   { from { transform: translateY(0); } to { transform: translateY(-2.5%); } }
+@keyframes drg-tail  { from { transform: rotate(-6deg); } to { transform: rotate(7deg); } }
+@keyframes drg-wing  { from { transform: rotate(-3deg); } to { transform: rotate(5deg); } }
+@keyframes drg-blink { 0%,93%,100% { transform: scaleY(0); } 96% { transform: scaleY(1); } 98% { transform: scaleY(0); } }

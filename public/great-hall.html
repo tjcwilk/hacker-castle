@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hacker Castle — The Great Hall</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="/css/theme.css" />
+  <link rel="stylesheet" href="/css/great-hall.css" />
+</head>
+<body>
+
+  <main class="hall">
+    <!-- The room: a one-point-perspective stone hall (walls, floor, ceiling). -->
+    <div class="stage">
+      <div class="stage__bg" aria-hidden="true"></div>
+
+      <a class="hall-exit" href="/">&lt; leave</a>
+      <p class="hall-welcome">Welcome, <span id="who">hacker</span></p>
+      <div class="hall-banner"><span>THE&nbsp;GREAT&nbsp;HALL</span></div>
+
+      <!-- wall torches -->
+      <span class="torch torch--l" aria-hidden="true"><i></i></span>
+      <span class="torch torch--r" aria-hidden="true"><i></i></span>
+
+      <!-- Badges board mounted on the back wall -->
+      <section class="badge-board">
+        <span class="chain chain--l" aria-hidden="true"></span>
+        <span class="chain chain--r" aria-hidden="true"></span>
+        <h2 class="badge-board__title">Badges</h2>
+        <div class="badges" id="badges"><p class="loading">loading…</p></div>
+        <form class="flag-form" id="flag-form" autocomplete="off">
+          <input id="flag-input" name="flag" placeholder="enter a secret flag…" maxlength="64" />
+          <button class="btn" type="submit">Claim</button>
+        </form>
+        <p class="flag-msg" id="flag-msg" role="status"></p>
+      </section>
+
+      <!-- Room doors set along the hall -->
+      <div class="doors" id="doors" aria-label="Rooms of the castle"></div>
+
+      <!-- The dragon guardian, standing on the floor -->
+      <div class="dragon-spot">
+        <p class="dragon-speech" id="dragon-speech">I guard this hall.</p>
+        <svg class="dragon" viewBox="0 0 140 220" role="img" aria-label="The castle dragon guardian">
+          <defs>
+            <clipPath id="dEye"><ellipse cx="46" cy="62" rx="7" ry="8"/></clipPath>
+          </defs>
+          <g class="drg">
+            <!-- tail, curling down to the floor (behind the body) -->
+            <path class="drg-tail" d="M88,150 C114,150 126,176 114,204 C108,189 97,185 85,185 C80,171 79,159 88,150 Z"
+                  fill="var(--d-body)" stroke="var(--d-edge)" stroke-width="3" stroke-linejoin="round"/>
+            <!-- one clean folded wing (behind the body) -->
+            <path class="drg-wing" d="M82,116 L118,84 L114,120 L96,140 Z"
+                  fill="var(--d-wing)" stroke="var(--d-edge)" stroke-width="3" stroke-linejoin="round"/>
+            <!-- hind legs -->
+            <rect x="48" y="172" width="20" height="40" rx="9" fill="var(--d-body)" stroke="var(--d-edge)" stroke-width="3"/>
+            <rect x="74" y="174" width="20" height="40" rx="9" fill="var(--d-body)" stroke="var(--d-edge)" stroke-width="3"/>
+            <!-- single body + neck + head silhouette (no internal seams) -->
+            <path d="M90,196
+                     C104,190 107,162 96,146
+                     C107,134 109,112 96,96
+                     C102,82 98,66 84,60
+                     C88,50 82,42 72,44
+                     C66,38 56,38 50,44
+                     C40,40 28,48 24,60
+                     C20,66 24,72 34,72
+                     C44,76 56,74 64,74
+                     C58,86 60,100 56,112
+                     C46,134 44,168 52,194
+                     C62,202 80,202 90,196 Z"
+                  fill="var(--d-body)" stroke="var(--d-edge)" stroke-width="3" stroke-linejoin="round"/>
+            <!-- lighter belly -->
+            <path d="M56,116 C48,146 50,176 62,194 C74,182 78,150 74,120 Z" fill="var(--d-belly)"/>
+            <!-- back ridge spikes -->
+            <path d="M86,60 L94,48 L97,63 Z" fill="var(--d-spike)" stroke="var(--d-edge)" stroke-width="2"/>
+            <path d="M95,82 L104,71 L106,86 Z" fill="var(--d-spike)" stroke="var(--d-edge)" stroke-width="2"/>
+            <path d="M99,110 L109,101 L110,116 Z" fill="var(--d-spike)" stroke="var(--d-edge)" stroke-width="2"/>
+            <!-- horns -->
+            <path d="M76,46 L92,30 L82,50 Z" fill="var(--d-spike)" stroke="var(--d-edge)" stroke-width="2"/>
+            <path d="M66,46 L74,28 L74,50 Z" fill="var(--d-spike)" stroke="var(--d-edge)" stroke-width="2"/>
+            <!-- nostril -->
+            <circle cx="27" cy="63" r="2.2" fill="var(--d-edge)"/>
+            <!-- eye, slit pupil, blinking -->
+            <g clip-path="url(#dEye)">
+              <ellipse cx="46" cy="62" rx="7" ry="8" fill="#fff"/>
+              <ellipse cx="45" cy="62" rx="2.6" ry="7" fill="var(--d-eye)"/>
+              <rect class="drg-lid" x="38" y="53" width="18" height="20" fill="var(--d-body)"/>
+            </g>
+            <!-- heavy brow ridge, half-lidding the eye for a fiercer look -->
+            <path d="M34,54 L58,48 L58,58 L40,62 Z" fill="var(--d-edge)"/>
+            <!-- little arm -->
+            <path d="M55,140 q-12,2 -16,14 q9,-4 15,-2 Z" fill="var(--d-body)" stroke="var(--d-edge)" stroke-width="3" stroke-linejoin="round"/>
+          </g>
+        </svg>
+        <div class="dragon-shadow" aria-hidden="true"></div>
+      </div>
+
+    </div>
+  </main>
+
+  <script src="/js/great-hall.js"></script>
+</body>
+</html>

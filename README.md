@@ -28,12 +28,12 @@ plays it — so they just enter a **nickname** (no passwords, no accounts).
 Two linked tables:
 
 ```
-user                          score
-----                          -----
-id (0=dragon, 1=student)  ◄──  user_id   (which user this row belongs to)
-nickname                      id         (unique challenge-entry id)
+user                          badges
+----                          ------
+id (0=dragon, 1=student)  ◄──  user_id   (which user earned this badge)
+nickname                      id         (unique badge-entry id)
                               name       (the challenge's name)
-                              passed     (0 = not passed, 1 = passed)
+                              passed     (0 = not earned, 1 = earned)
 ```
 
 The `user` table holds **at most two rows**, fixed by a `CHECK (id IN (0, 1))`:
@@ -43,8 +43,8 @@ The `user` table holds **at most two rows**, fixed by a `CHECK (id IN (0, 1))`:
 - **id 1 — the student**: the single real player, created/updated when they
   enter a nickname at the gate. "Run away" deletes only this row (dragon stays).
 
-A user has many `score` rows — one per challenge — and a challenge is simply
-**passed or not** (a 0/1 flag; SQLite has no real boolean).
+A user has many `badges` rows — one per challenge — and a challenge is simply
+**earned or not** (a 0/1 flag; SQLite has no real boolean).
 
 ## Run it
 
@@ -78,39 +78,77 @@ PORT=8080 npm run dev      # http://localhost:8080  (auto-reloads on change)
 ```
 (Port 80 needs admin rights, so use `PORT=8080` when running on your own machine.)
 
-## The look — "Synthwave Terminal"
+## The look
 
-The castle's signature theme: a glitching CRT terminal in 80s synthwave colours
-(purple sky, pink/orange sunset glow, neon grid floor, scanlines). The whole
-palette lives in CSS variables at the top of `public/css/landing.css` (`:root`),
-so every future page (inside the castle, the rooms) inherits the same identity.
+The gate (outside) keeps the synthwave-terminal style (glitch title, neon
+castle). Inside, **The Great Hall** is a more traditional torchlit stone hall
+rendered in basic 3D perspective. The shared palette and primitives live in
+**`public/css/theme.css`** (linked first on every page).
+
+## Pages
+
+- **Gate** (`/`) — pick a nickname, then "Enter the Castle".
+- **The Great Hall** (`/great-hall`) — inside the castle: a subtly 3D stone
+  hall with a **Badges** board on the back wall, a row of archway **doors** to
+  the rooms, and the **dragon guardian** (animated) standing to the side.
+- **Rooms** (`/rooms/<slug>.html`) — one page per challenge (placeholders for
+  now):
+  - **tutorial** — explains flags/badges and hands you a free first flag.
+  - **view-source** — the flag is hidden in the page's HTML source (lesson:
+    nothing client-side is secret).
+  - **xss** — cross-site scripting (coming soon).
+  - **directory-traversal** — path traversal (coming soon).
+
+### Challenges, flags and badges
+Challenges are defined server-side in **`challenges.js`** (one entry = one room =
+one badge). Each has a secret `flag` that **never leaves the server**. A student
+finds a flag in a room and submits it on the Great Hall's badges board; if it
+matches, that challenge is recorded in the `badges` table and its badge lights
+up — badges start locked/empty and become bright + sparkly when earned.
 
 ## Project layout
 ```
 hacker-castle/
-├── server.js          # Express: serves the site + a small JSON API
-├── db.js              # Creates & seeds the SQLite database on boot
+├── server.js          # Express: serves the site + the JSON API
+├── db.js              # Builds the SQLite database fresh on boot
+├── challenges.js      # The challenges (= rooms = badges) + secret flags
 ├── public/            # The front-end (served as-is, no build step)
-│   ├── index.html     # The landing page
-│   ├── css/landing.css
-│   └── js/landing.js  # Builds the castle, runs the entry gate
+│   ├── index.html        # The gate (entry)
+│   ├── great-hall.html   # The Great Hall (inside the castle)
+│   ├── css/
+│   │   ├── theme.css     # Shared identity: palette + primitives
+│   │   ├── landing.css   # Gate-only styles
+│   │   ├── great-hall.css# Great Hall: room, badges board, doors, dragon
+│   │   └── room.css      # Shared styling for the challenge room pages
+│   ├── js/
+│   │   ├── landing.js    # Builds the castle, runs the entry gate
+│   │   └── great-hall.js # Badges board, flag claiming, dragon, room doors
+│   ├── img/
+│   │   ├── castle-banner.svg  # README/landing banner
+│   │   └── hall.svg           # The Great Hall backdrop (perspective room)
+│   └── rooms/                 # One placeholder page per challenge
+│       ├── tutorial.html
+│       ├── view-source.html
+│       ├── xss.html
+│       └── directory-traversal.html
 ├── Dockerfile
 └── package.json
 ```
+Each real room will later get its own folder under `public/rooms/`.
 
-## API (skeleton)
-| Method | Path          | Purpose |
-|--------|---------------|---------|
-| GET    | `/api/health` | Is the castle awake? |
-| GET    | `/api/me`     | The current user's `nickname` (or `null` if nobody has entered yet). |
-| POST   | `/api/enter`  | Set the user's `nickname`; replies with `{ nickname, returning }`. |
-| POST   | `/api/leave`  | "Run away" — forget the user and clear their scores (a logout). |
-| GET    | `/api/scores` | Notice-board: who passed which challenge (empty for now). |
+## API
+| Method | Path              | Purpose |
+|--------|-------------------|---------|
+| GET    | `/api/health`     | Is the castle awake? |
+| GET    | `/api/me`         | The current user's `nickname` (or `null`). |
+| POST   | `/api/enter`      | Set the user's `nickname`; replies with `{ nickname, returning }`. |
+| POST   | `/api/leave`      | "Run away" — forget the user and clear their badges (a logout). |
+| GET    | `/api/challenges` | The challenge list + whether the user earned each (no flags). |
+| POST   | `/api/flag`       | Submit a secret flag; awards the matching challenge's badge. |
 
 ## What's next
-- Pick a theme, then refine its art.
-- Build the **inside** of the castle (notice board + room navigation).
-- Add the first challenge room.
+- Polish the dragon and the Great Hall details.
+- Build the first real challenge room under `public/rooms/`.
 - Self-host the pixel fonts so the castle works fully offline.
 - When the container grows more services, swap the Dockerfile `CMD` for a
   process supervisor (e.g. `supervisord`).

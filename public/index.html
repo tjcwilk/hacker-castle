@@ -12,6 +12,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet" />
 
+  <link rel="stylesheet" href="/css/theme.css" />
   <link rel="stylesheet" href="/css/landing.css" />
 </head>
 <body>
@@ -45,34 +46,22 @@
     <div class="scanlines" aria-hidden="true"></div>
   </main>
 
-  <!-- The gate: a small overlay where a student types their handle. This calls
-       the real /api/enter endpoint, proving the front-end <-> server <->
-       database chain works end to end. -->
+  <!-- The gate: a small overlay where a student types their nickname. It calls
+       the real /api/enter endpoint, then takes them into the Great Hall. It only
+       appears when no nickname is set yet, or when changing an existing one. -->
   <div class="gate-overlay" id="gate" hidden>
     <div class="gate-card">
-      <!-- State A: type (or change) your nickname -->
-      <div id="gate-entry">
-        <h2 id="gate-entry-title">Who approaches the castle?</h2>
-        <p class="gate-hint">Pick a nickname, brave hacker.</p>
-        <form id="gate-form">
-          <input id="nickname" name="nickname" maxlength="24" autocomplete="off"
-                 placeholder="e.g. n1ght_owl" required />
-          <div class="gate-actions">
-            <button type="button" id="gate-cancel" class="ghost">Back</button>
-            <button type="submit">Enter &gt;</button>
-          </div>
-        </form>
-        <p class="gate-result" id="gate-result" role="status"></p>
-      </div>
-
-      <!-- State B: greeting, with the option to change name -->
-      <div id="gate-greeting" hidden>
-        <h2 id="greeting-text">Welcome!</h2>
+      <h2 id="gate-entry-title">Who approaches the castle?</h2>
+      <p class="gate-hint">Pick a nickname, brave hacker.</p>
+      <form id="gate-form">
+        <input id="nickname" name="nickname" maxlength="24" autocomplete="off"
+               placeholder="e.g. n1ght_owl" required />
         <div class="gate-actions">
-          <button type="button" id="gate-change" class="ghost">Change name</button>
-          <button type="button" id="gate-continue">Enter the Castle &gt;</button>
+          <button type="button" id="gate-cancel" class="ghost">Back</button>
+          <button type="submit">Enter &gt;</button>
         </div>
-      </div>
+      </form>
+      <p class="gate-result" id="gate-result" role="status"></p>
     </div>
   </div>
 
