@@ -58,11 +58,13 @@ html, body { overflow: hidden; }
 }
 .title span { display: block; }
 
-/* The pixel font (and its jagged vertical-stripe look) is kept ONLY for the big
-   glitch title. The button and the "playing as" text use the crisp UI font so
-   they read cleanly. */
+/* Keep the retro look ONLY on the big glitch title: the pixel font stays there,
+   and the CRT scanlines sit BELOW the button + "playing as" text so those read
+   sharp — crisp UI font, smoothed, and lifted above the scanline overlay. */
+.landing .scanlines { z-index: 1; }
 .enter-btn,
 .player-status {
+  position: relative; z-index: 2;
   font-family: var(--font-ui);
   -webkit-font-smoothing: antialiased;
   image-rendering: auto;

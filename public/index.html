@@ -32,6 +32,10 @@
       <!-- castle injected here by landing.js -->
       <div class="castle-mount"></div>
 
+      <!-- CRT scanlines cover the page (and the title/castle), but sit BELOW the
+           button + status (via z-index in landing.css) so those read sharp. -->
+      <div class="scanlines" aria-hidden="true"></div>
+
       <button class="enter-btn" data-enter>&gt; Enter the Castle</button>
 
       <!-- Shown once a nickname is saved (remembered across refreshes). -->
@@ -41,9 +45,6 @@
         <button type="button" class="action action--run" data-leave>run away</button>
       </div>
     </div>
-
-    <!-- CRT scanline overlay sits on top of everything. -->
-    <div class="scanlines" aria-hidden="true"></div>
   </main>
 
   <!-- The gate: a small overlay where a student types their nickname. It calls
