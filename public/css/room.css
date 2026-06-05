@@ -47,3 +47,12 @@
   box-shadow: 6px 6px 0 #7a0a52; padding: 1em 1.5em;
 }
 .room .back:active { transform: translate(4px, 4px); box-shadow: 2px 2px 0 #7a0a52; }
+
+/* Keep the CRT scanlines on the background + heading, but lift the readable
+   content (tag, text, flag, button) above them so it stays sharp — matching the
+   index page. (.room isn't a stacking context, so these win over the z-60
+   scanline overlay directly.) */
+.room__tag,
+.room p,
+.room .flag-box,
+.room .back { position: relative; z-index: 70; }
