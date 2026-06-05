@@ -19,6 +19,12 @@ COPY . .
 # The castle listens on the standard web port.
 EXPOSE 80
 
+# NOTE on the hostname: a container's hostname is a RUN-TIME setting, not an
+# image one — it can't be baked into a Dockerfile (and `ENV HOSTNAME` does NOT
+# set it; Docker overrides that at start). It's pinned to "hacker-castle" for
+# you in docker-compose.yml (`hostname: hacker-castle`), so `docker compose up`
+# needs no flags. For plain docker run, pass `--hostname hacker-castle`.
+
 # Start the server. The SQLite database is created fresh on every boot.
 #
 # FUTURE: when this container runs more than just the website, swap this CMD

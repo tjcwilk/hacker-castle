@@ -49,9 +49,17 @@ A user has many `badges` rows — one per challenge — and a challenge is simpl
 ## Run it
 
 ### With Docker (the real deployment)
+The container's **name and network hostname are both `hacker-castle`**, so it
+joins the lab network with a stable identity. The easiest way is Docker Compose
+(which pins this for you — see `docker-compose.yml`):
+```bash
+docker compose up --build      # open http://localhost:8080
+```
+Or with plain `docker run` — note `--hostname` sets the hostname (it can't be
+baked into the image; it's a run-time flag):
 ```bash
 docker build -t hacker-castle .
-docker run --rm -p 8080:80 hacker-castle
+docker run --rm --name hacker-castle --hostname hacker-castle -p 8080:80 hacker-castle
 # open http://localhost:8080
 ```
 In the lab, the container gets its own IP and listens on port 80 directly.

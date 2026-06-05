@@ -1,0 +1,15 @@
+# Single-container definition for Hacker Castle.
+# Pins the container name AND the network hostname to "hacker-castle" so it
+# joins the training-lab network with a stable, predictable identity.
+#
+#   docker compose up --build     # start (http://localhost:8080)
+#   docker compose down           # stop + remove (wipes the lab — DB is fresh on boot)
+
+services:
+  hacker-castle:
+    build: .
+    image: hacker-castle
+    container_name: hacker-castle
+    hostname: hacker-castle
+    ports:
+      - "8080:80"
