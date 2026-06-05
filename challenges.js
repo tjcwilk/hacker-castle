@@ -37,8 +37,7 @@ module.exports = [
     name: 'The Hall of Echoes',
     icon: '💬',
     blurb: 'Cross-site scripting: make the castle run your words as code.',
-    flag: 'FLAG{reflected_xss_placeholder}',
-    comingSoon: true,
+    flag: 'FLAG{the_hall_echoes_your_code}',
   },
   {
     slug: 'directory-traversal',
