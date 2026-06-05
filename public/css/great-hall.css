@@ -227,6 +227,12 @@ body {
   transform: translate(-50%, -50%) rotate(7deg);
   color: #173f17; background: linear-gradient(180deg, #c6edba, #8ed082); border-color: #356b2c;
 }
+/* Room not built yet: no "Enter" sign, a red "Closed" sign hangs on the door. */
+.door.coming-soon .door__sign { display: none; }
+.door.coming-soon .door__status {
+  color: #ffe9e9; border-color: #4a1212;
+  background: linear-gradient(180deg, #c0464a, #7a1f24);
+}
 
 /* --- Dragon guardian ----------------------------------------------------- */
 .dragon-spot {

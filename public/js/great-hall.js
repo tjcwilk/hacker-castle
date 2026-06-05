@@ -21,11 +21,14 @@ function badgeMarkup(c) {
 
 function doorMarkup(c) {
   // Each door leads to that challenge's room page (placeholders for now).
-  return `<a class="door ${c.passed ? 'done' : ''}" href="/rooms/${c.slug}.html" data-slug="${c.slug}">
+  // Rooms that aren't built yet show a "Closed" sign (the link still works).
+  const cls = `door ${c.passed ? 'done' : ''} ${c.comingSoon ? 'coming-soon' : ''}`;
+  const status = c.comingSoon ? 'Closed' : c.passed ? 'Complete' : 'Incomplete';
+  return `<a class="${cls}" href="/rooms/${c.slug}.html" data-slug="${c.slug}">
     <span class="door__sign">Enter</span>
     <span class="door__frame">
       <span class="door__leaf"></span>
-      <span class="door__status">${c.passed ? 'Complete' : 'Incomplete'}</span>
+      <span class="door__status">${status}</span>
     </span>
     <span class="door__plaque">${shortName(c.name)}</span>
   </a>`;

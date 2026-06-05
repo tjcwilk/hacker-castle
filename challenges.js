@@ -9,6 +9,8 @@
 //   icon  : emoji shown on the earned badge
 //   blurb : one-line teaser for the door plaque / board
 //   flag  : the secret flag that earns the badge
+//   comingSoon : true if the room isn't built yet — its door shows a "Closed"
+//                sign (the link still works, leading to a placeholder page)
 //
 // NOTE: flags live on the server and are never sent to the browser — the
 // front-end only ever learns whether a *submitted* flag was correct. (The
@@ -36,6 +38,7 @@ module.exports = [
     icon: '💬',
     blurb: 'Cross-site scripting: make the castle run your words as code.',
     flag: 'FLAG{reflected_xss_placeholder}',
+    comingSoon: true,
   },
   {
     slug: 'directory-traversal',
@@ -43,5 +46,6 @@ module.exports = [
     icon: '🗂️',
     blurb: 'Directory traversal: sneak past the path you were given.',
     flag: 'FLAG{dot_dot_slash_placeholder}',
+    comingSoon: true,
   },
 ];

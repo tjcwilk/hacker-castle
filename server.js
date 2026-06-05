@@ -88,6 +88,7 @@ app.get('/api/challenges', (req, res) => {
       icon: c.icon,
       blurb: c.blurb,
       passed: passed.has(c.slug),
+      comingSoon: !!c.comingSoon,
     }))
   );
 });
