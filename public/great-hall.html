@@ -33,11 +33,13 @@
         <span class="chain chain--r" aria-hidden="true"></span>
         <h2 class="badge-board__title">Badges</h2>
         <div class="badges" id="badges"><p class="loading">loading…</p></div>
+        <!-- Result message sits ABOVE the form so the input + Claim stay flush
+             at the bottom of the board (no whitespace underneath them). -->
+        <p class="flag-msg" id="flag-msg" role="status"></p>
         <form class="flag-form" id="flag-form" autocomplete="off">
           <input id="flag-input" name="flag" placeholder="enter a secret flag…" maxlength="64" />
           <button class="btn" type="submit">Claim</button>
         </form>
-        <p class="flag-msg" id="flag-msg" role="status"></p>
       </section>
 
       <!-- Room doors set along the hall -->
@@ -99,6 +101,9 @@
         </svg>
         <div class="dragon-shadow" aria-hidden="true"></div>
       </div>
+
+      <!-- Fireworks burst here when a new badge is unlocked. -->
+      <div class="fx" id="fx" aria-hidden="true"></div>
 
     </div>
   </main>

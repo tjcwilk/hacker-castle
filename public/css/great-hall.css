@@ -145,7 +145,7 @@ body {
 .badge.just-earned .badge__icon { animation: badge-pop 0.6s steps(6); }
 @keyframes badge-pop { 0% { transform: scale(0.6) rotate(-8deg); } 60% { transform: scale(1.25) rotate(6deg); } 100% { transform: scale(1); } }
 
-.flag-form { display: flex; gap: 0.4em; margin-top: 0.7em; }
+.flag-form { display: flex; gap: 0.4em; margin-top: 0; }
 #flag-input {
   flex: 1; min-width: 0; padding: 0.45em 0.55em;
   font-family: var(--font-ui); font-size: 0.82em;
@@ -157,7 +157,7 @@ body {
   font-size: 0.55em; padding: 0 0.9em; box-shadow: 3px 3px 0 #00000066;
   background: linear-gradient(180deg, #ffd27a, #d98a2a);
 }
-.flag-msg { min-height: 1.2em; margin: 0.5em 0 0; text-align: center; font-family: var(--font-ui); font-size: 0.82em; }
+.flag-msg { min-height: 1.1em; margin: 0.6em 0 0.4em; text-align: center; font-family: var(--font-ui); font-size: 0.82em; }
 .flag-msg.ok  { color: #6ad07a; }
 .flag-msg.bad { color: #d9533a; }
 .loading { margin: 0; text-align: center; font-family: var(--font-ui); font-size: 0.8em; opacity: 0.7; }
@@ -169,6 +169,19 @@ body {
   display: flex; justify-content: flex-start; align-items: flex-end; gap: 1.6%;
 }
 .door { width: 9.5%; text-decoration: none; display: flex; flex-direction: column; align-items: center; gap: 0.3em; }
+/* Glowing "Enter" sign above each doorway. */
+.door__sign {
+  font-family: var(--font-ui); font-weight: 800; font-size: 0.58em; letter-spacing: 0.12em;
+  text-transform: uppercase; line-height: 1; color: #3a1e00;
+  background: linear-gradient(180deg, #ffe06a, #ff9a3c);
+  border: 1px solid #8a5212; border-radius: 3px; padding: 0.25em 0.6em;
+  box-shadow: 0 0.12em 0 #7a4410, 0 0 0.5em rgba(255, 180, 60, 0.55);
+}
+.door:hover .door__sign { box-shadow: 0 0.12em 0 #7a4410, 0 0 0.9em var(--accent); }
+.door.done .door__sign {
+  color: #0c2a10; border-color: #2f6b34;
+  background: linear-gradient(180deg, #9be39b, #4faf5a);
+}
 .door__frame {
   position: relative; width: 100%; aspect-ratio: 5 / 8;
   border: 0.18em solid var(--door-edge); border-bottom: 0;
@@ -196,10 +209,33 @@ body {
 .door.done .door__frame { border-color: #6ad07a; box-shadow: 0 0 0.9em #6ad07a, inset 0 0 1em rgba(0,0,0,0.5); }
 .door.done .door__plaque::after { content: ' ✓'; color: #6ad07a; }
 
+/* Crooked status sign hanging on the door (incomplete / complete). */
+.door__status {
+  position: absolute; top: 44%; left: 50%;
+  transform: translate(-50%, -50%) rotate(-8deg);
+  font-family: var(--font-ui); font-weight: 800; font-size: 0.4em; letter-spacing: 0.03em;
+  text-transform: uppercase; line-height: 1; white-space: nowrap;
+  padding: 0.3em 0.5em; border-radius: 2px;
+  color: #4a3210; background: linear-gradient(180deg, #f0ddae, #d9bd84);
+  border: 1px solid #6a4a20; box-shadow: 0 0.1em 0.2em rgba(0,0,0,0.55);
+}
+.door__status::before { /* the nail it hangs from */
+  content: ''; position: absolute; left: 50%; top: -0.5em; transform: translateX(-50%);
+  width: 0.22em; height: 0.5em; background: #2a1c0c; border-radius: 1px;
+}
+.door.done .door__status {
+  transform: translate(-50%, -50%) rotate(7deg);
+  color: #173f17; background: linear-gradient(180deg, #c6edba, #8ed082); border-color: #356b2c;
+}
+
 /* --- Dragon guardian ----------------------------------------------------- */
 .dragon-spot {
   position: absolute; right: 3.5%; bottom: 5%; z-index: 5;
-  height: 57%; display: flex; flex-direction: column; align-items: center; justify-content: flex-end;
+  /* Track the smaller of height/width so the dragon shrinks on narrow windows
+     too — otherwise it dwarfs the (width-sized) board + doors. Identical to the
+     old 57% at 16:9, smaller as the window narrows. */
+  height: min(57vh, 32vw);
+  display: flex; flex-direction: column; align-items: center; justify-content: flex-end;
 }
 .dragon { height: 100%; width: auto; overflow: visible;
   --d-body: #5d6b52; --d-belly: #c9d6ad; --d-edge: #202a18; --d-spike: #d2a14a; --d-eye: #16210d; --d-wing: #495540;
@@ -226,3 +262,35 @@ body {
 @keyframes drg-tail  { from { transform: rotate(-6deg); } to { transform: rotate(7deg); } }
 @keyframes drg-wing  { from { transform: rotate(-3deg); } to { transform: rotate(5deg); } }
 @keyframes drg-blink { 0%,93%,100% { transform: scaleY(0); } 96% { transform: scaleY(1); } 98% { transform: scaleY(0); } }
+
+/* --- Celebration: excited dragon + fireworks (on a new badge) ------------- */
+.dragon.celebrating .drg { animation: drg-celebrate 0.5s ease-in-out 6; }
+@keyframes drg-celebrate {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  20% { transform: translateY(-14%) rotate(-7deg); }
+  40% { transform: translateY(0)    rotate(0deg); }
+  60% { transform: translateY(-14%) rotate(7deg); }
+  80% { transform: translateY(-5%)  rotate(0deg); }
+}
+
+.fx { position: absolute; inset: 0; z-index: 40; pointer-events: none; overflow: hidden; }
+.firework { position: absolute; width: 0; height: 0; }
+.firework span {
+  position: absolute; left: 0; top: 0; width: 6px; height: 6px; border-radius: 50%;
+  background: currentColor; box-shadow: 0 0 8px currentColor;
+  animation: spark 1s ease-out forwards;
+}
+@keyframes spark {
+  0%   { transform: translate(0, 0) scale(1); opacity: 1; }
+  100% { transform: translate(var(--dx), var(--dy)) scale(0.2); opacity: 0; }
+}
+
+/* --- Poke the dragon: funny one-shot reactions --------------------------- */
+.dragon.react-wobble .drg { animation: react-wobble 0.6s ease-in-out; }
+.dragon.react-jump   .drg { animation: react-jump 0.5s ease-out; }
+.dragon.react-squish .drg { animation: react-squish 0.5s ease-in-out; }
+.dragon.react-spin   .drg { animation: react-spin 0.75s ease-in-out; }
+@keyframes react-wobble { 0%,100% { transform: rotate(0); } 25% { transform: rotate(-13deg); } 75% { transform: rotate(13deg); } }
+@keyframes react-jump   { 0%,100% { transform: translateY(0); } 40% { transform: translateY(-22%); } }
+@keyframes react-squish { 0%,100% { transform: scale(1, 1); } 50% { transform: scale(1.16, 0.8); } }
+@keyframes react-spin   { 0% { transform: rotate(0); } 100% { transform: rotate(360deg); } }
