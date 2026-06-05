@@ -63,8 +63,28 @@ function showGate({ changing = false } = {}) {
   nicknameInput.select();
 }
 
+const enterOverlay = document.getElementById('enter-overlay');
+const landingEl = document.querySelector('.landing');
+const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
 function closeGate() { gate.hidden = true; }
-function enterHall() { window.location.href = '/great-hall'; }
+
+// Step "into" the castle: zoom the scene into the gate, fade to black, then go.
+function enterHall() {
+  closeGate();
+  const gateArch = document.querySelector('.castle .gate');
+  if (reduceMotion || !gateArch || !landingEl) {
+    window.location.href = '/great-hall';
+    return;
+  }
+  const r = gateArch.getBoundingClientRect();
+  landingEl.style.transformOrigin =
+    `${((r.left + r.width / 2) / window.innerWidth) * 100}% ` +
+    `${((r.top + r.height / 2) / window.innerHeight) * 100}%`;
+  landingEl.classList.add('entering');
+  enterOverlay.classList.add('on');
+  setTimeout(() => { window.location.href = '/great-hall'; }, 650);
+}
 
 // "Run away" = log out. Forget the saved nickname and reset the hero.
 async function runAway() {
