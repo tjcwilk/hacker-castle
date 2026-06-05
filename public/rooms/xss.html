@@ -244,12 +244,7 @@
 
       <!-- Talk to the parrot -->
       <div class="talk-bar">
-        <p class="instruction" id="instruction">
-          This parrot <strong>repeats whatever you say</strong> in its speech bubble. A careful parrot would
-          take care what it repeats, but this one will <strong>repeat anything you say to it</strong> — even
-          secret code. That's <strong>Cross-Site Scripting</strong>! Open the 📖 <strong>Book of Spells</strong>,
-          then speak the spell to the parrot.
-        </p>
+        <p class="instruction" id="instruction">Talk to the parrot 🦜</p>
         <div class="talk-row">
           <input id="say" placeholder="say something to the parrot…" autocomplete="off" spellcheck="false" />
           <button id="say-btn" class="say-btn" type="button">Speak 🦜</button>
@@ -311,6 +306,14 @@
     const bookView = document.getElementById('bookview');
     const bookSpell = document.getElementById('book-spell');
     let step = 1;
+    let spokenOnce = false;
+
+    // Shown above the input only AFTER the student first talks to the parrot.
+    const LESSON =
+      'This parrot <strong>repeats whatever you say</strong> in its speech bubble. A careful parrot would ' +
+      'take care what it repeats, but this one will <strong>repeat anything you say to it</strong> — even ' +
+      "secret code. That's <strong>Cross-Site Scripting</strong>! Open the 📖 <strong>Book of Spells</strong>, " +
+      'then speak the spell to the parrot.';
 
     function speak() {
       // VULNERABLE ON PURPOSE: the parrot "repeats" raw input as HTML. A safe
@@ -319,6 +322,10 @@
       parrot.classList.remove('squawk');
       void parrot.offsetWidth;
       parrot.classList.add('squawk');
+      if (!spokenOnce) {
+        spokenOnce = true;            // reveal the lesson once they've engaged
+        instruction.innerHTML = LESSON;
+      }
     }
     document.getElementById('say-btn').addEventListener('click', speak);
     say.addEventListener('keydown', (e) => { if (e.key === 'Enter') speak(); });
