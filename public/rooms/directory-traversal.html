@@ -9,20 +9,67 @@
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/css/theme.css" />
   <link rel="stylesheet" href="/css/room.css" />
+  <style>
+    /* Hidden Passages — a DARK, shadowy room (this challenge isn't built yet). */
+    .scene--shadow {
+      --bg-filter: brightness(0.3) saturate(0.45) contrast(1.05);
+      --banner-bg: linear-gradient(180deg, #3a3a46, #18181f);
+      --banner-edge: #8a8a98;
+      --tag-color: #b4b4c4;
+    }
+    .scene--shadow .scene__bg { background-color: #05050a; }
+
+    /* A shaft of light shining down from a gap in the ceiling. */
+    .lightbeam {
+      position: absolute; top: -2%; left: 50%; transform: translateX(-50%); z-index: 3; pointer-events: none;
+      width: 46%; height: 94%;
+      background: linear-gradient(180deg, rgba(255,244,210,0.55) 0%, rgba(255,240,200,0.12) 55%, transparent 92%);
+      clip-path: polygon(40% 0, 60% 0, 100% 100%, 0% 100%);
+      mix-blend-mode: screen; filter: blur(3px);
+    }
+    .lightpool {
+      position: absolute; bottom: 7%; left: 50%; transform: translateX(-50%); z-index: 2; pointer-events: none;
+      width: 44%; height: 18%; border-radius: 50%;
+      background: radial-gradient(ellipse, rgba(255,244,210,0.42), transparent 70%); mix-blend-mode: screen; filter: blur(6px);
+    }
+    /* dust motes drifting in the light */
+    .mote { position: absolute; width: 4px; height: 4px; border-radius: 50%; background: rgba(255,250,230,0.9);
+      box-shadow: 0 0 6px rgba(255,250,230,0.8); z-index: 4; pointer-events: none; animation: drift 9s linear infinite; }
+
+    .empty-msg {
+      position: absolute; left: 50%; top: 52%; transform: translate(-50%, -50%); z-index: 5; text-align: center;
+      max-width: 30ch; color: #f3edd6; font-family: 'Segoe UI', system-ui, sans-serif;
+      text-shadow: 0 0 16px rgba(255,240,200,0.55);
+    }
+    .empty-msg__big { font-family: var(--font-head); font-size: clamp(0.85rem, 3.2vmin, 1.25rem); margin: 0 0 0.9rem; color: #fff; }
+    .empty-msg p { margin: 0 0 0.6rem; line-height: 1.55; font-size: clamp(1rem, 2.5vmin, 1.2rem); }
+    @keyframes drift { from { transform: translateY(-10px); opacity: 0; } 15% { opacity: 1; } 85% { opacity: 1; } to { transform: translateY(60px); opacity: 0; } }
+  </style>
 </head>
 <body>
-  <main class="room">
-    <div class="room__icon" aria-hidden="true">🗂️</div>
-    <p class="room__tag">Web · Directory Traversal</p>
-    <h1>The Hidden Passages</h1>
-    <p>
-      Directory traversal is sneaking outside the folder you're meant to see — using paths
-      like <code>../../</code> to reach files you were never given a door to.
-    </p>
-    <p><strong>This room is still being built.</strong> Check back soon!</p>
-    <a class="back" href="/great-hall">&lt; Back to the Great Hall</a>
+  <main class="room scene scene--shadow">
+    <div class="scene__stage">
+      <div class="scene__bg" aria-hidden="true"></div>
+      <div class="lightpool" aria-hidden="true"></div>
+      <div class="lightbeam" aria-hidden="true"></div>
+      <span class="mote" style="left:46%; top:18%; animation-delay:0s" aria-hidden="true"></span>
+      <span class="mote" style="left:53%; top:30%; animation-delay:2.5s" aria-hidden="true"></span>
+      <span class="mote" style="left:49%; top:44%; animation-delay:4.5s" aria-hidden="true"></span>
+      <span class="mote" style="left:44%; top:36%; animation-delay:6.5s" aria-hidden="true"></span>
+
+      <a class="back" href="/great-hall">&lt; Back</a>
+      <div class="scene__banner">🗂️ The Hidden Passages</div>
+      <p class="scene__tag">Web · Directory Traversal</p>
+
+      <div class="empty-msg">
+        <p class="empty-msg__big">This passage is empty…</p>
+        <p>The <strong>Hidden Passages</strong> challenge — sneaking past the path you were given with
+          <code>../../</code> — hasn't been built yet.</p>
+        <p>A lonely shaft of light waits for it. Check back soon! 🔦</p>
+      </div>
+    </div>
   </main>
-  <div class="scanlines" aria-hidden="true"></div>
+
   <script src="/js/room.js"></script>
 </body>
 </html>
