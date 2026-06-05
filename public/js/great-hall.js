@@ -178,6 +178,27 @@ dragonEl.addEventListener('click', () => {
   dragonSay(REACTIONS[Math.floor(Math.random() * REACTIONS.length)]);
 });
 
+// --- "Enter the room" transition: zoom toward the door, then load it ------
+const stage = document.querySelector('.stage');
+const roomTransition = document.getElementById('room-transition');
+const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+doorsEl.addEventListener('click', (e) => {
+  const door = e.target.closest('.door');
+  if (!door) return;
+  e.preventDefault();
+  const href = door.getAttribute('href');
+  if (reduceMotion) { window.location.href = href; return; }
+  // Zoom the whole hall toward the door the player picked, then fade out.
+  const r = door.getBoundingClientRect();
+  stage.style.transformOrigin =
+    `${((r.left + r.width / 2) / window.innerWidth) * 100}% ` +
+    `${((r.top + r.height / 2) / window.innerHeight) * 100}%`;
+  stage.classList.add('entering');
+  roomTransition.classList.add('on');
+  setTimeout(() => { window.location.href = href; }, 600);
+});
+
 // --- Boot ----------------------------------------------------------------
 (async function init() {
   try {

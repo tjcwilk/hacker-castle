@@ -294,3 +294,11 @@ body {
 @keyframes react-jump   { 0%,100% { transform: translateY(0); } 40% { transform: translateY(-22%); } }
 @keyframes react-squish { 0%,100% { transform: scale(1, 1); } 50% { transform: scale(1.16, 0.8); } }
 @keyframes react-spin   { 0% { transform: rotate(0); } 100% { transform: rotate(360deg); } }
+
+/* --- "Stepping through a door": zoom toward it, then fade to black -------- */
+.stage.entering { transition: transform 0.6s cubic-bezier(0.5, 0, 0.85, 0.3); transform: scale(2.7); }
+#room-transition {
+  position: fixed; inset: 0; z-index: 80; pointer-events: none;
+  background: #05030d; opacity: 0; transition: opacity 0.5s ease-in;
+}
+#room-transition.on { opacity: 1; pointer-events: auto; }
