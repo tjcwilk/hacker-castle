@@ -158,13 +158,35 @@
       font-family: var(--font-ui); color: #e8fff0; animation: winpop 0.5s ease;
     }
     .win-card h2 { font-family: var(--font-head); font-size: clamp(0.9rem, 3.5vmin, 1.2rem); color: #fff; margin: 0 0 0.7rem; }
-    .win-card .flag-box { margin: 0.7rem auto; }
+    /* The flag — bold and poppy so it stands out. */
+    .win-card .flag-box {
+      display: inline-block; margin: 0.7rem auto 0.3rem; user-select: all; letter-spacing: 0.02em;
+      font-family: 'Courier New', monospace; font-weight: 800; font-size: clamp(1.1rem, 3.4vmin, 1.6rem); color: #1a0033;
+      background: linear-gradient(180deg, var(--c-yellow), var(--c-orange));
+      padding: 0.5em 1em; border-radius: 8px; box-shadow: 0 0 26px rgba(255,46,136,0.6);
+    }
+    .flag-copy {
+      display: block; margin: 0.4rem auto 0.2rem; cursor: pointer; font-family: var(--font-ui); font-size: 0.95rem;
+      color: #0c2a1c; background: #9be3b8; border: 1px solid #3a9a6a; border-radius: 6px; padding: 0.35rem 0.9rem;
+    }
     .win-card .room-btn {
       display: inline-block; margin-top: 0.8rem; text-decoration: none; font-family: var(--font-head); font-size: 0.65rem;
       color: #1a0033; background: linear-gradient(180deg, var(--c-yellow), var(--c-orange));
       box-shadow: 5px 5px 0 #7a0a52; padding: 0.9em 1.3em;
     }
     @keyframes winpop { from { transform: scale(0.92); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+    /* Fireworks when you win. */
+    .fx { position: fixed; inset: 0; z-index: 40; pointer-events: none; overflow: hidden; }
+    .firework { position: absolute; width: 0; height: 0; }
+    .firework span {
+      position: absolute; left: 0; top: 0; width: 6px; height: 6px; border-radius: 50%;
+      background: currentColor; box-shadow: 0 0 8px currentColor; animation: spark 1s ease-out forwards;
+    }
+    @keyframes spark {
+      0%   { transform: translate(0, 0) scale(1); opacity: 1; }
+      100% { transform: translate(var(--dx), var(--dy)) scale(0.2); opacity: 0; }
+    }
   </style>
 </head>
 <body>
@@ -261,12 +283,15 @@
         <p>Whisper this incantation<br />to the parrot…</p>
       </div>
       <div class="page page--right">
-        <code class="book__spell" id="book-spell">&lt;img src=x onerror="alert('hello')"&gt;</code>
+        <code class="book__spell" id="book-spell">&lt;img src=x onerror="alert('Ohh... what is this? It looks like some code ran in my web browser... How strange.')"&gt;</code>
         <button class="book__copy" id="book-copy" type="button">📋 copy</button>
       </div>
     </div>
     <button class="book-close" id="book-close" type="button">close the book</button>
   </div>
+
+  <!-- Fireworks burst here when you win -->
+  <div class="fx" id="fx" aria-hidden="true"></div>
 
   <!-- Win -->
   <div class="win-modal" id="win" hidden>
@@ -275,6 +300,7 @@
       <p>That "phrase" was really <strong>computer code</strong>. The careless parrot ran it instead of just
         saying it — that's a Cross-Site Scripting bug. Here is your flag:</p>
       <div class="flag-box" id="flag"></div>
+      <button class="flag-copy" id="flag-copy" type="button">📋 Copy flag</button>
       <p>Enter it on the <strong>Badges</strong> board to earn this badge!</p>
       <p style="opacity:.8;font-size:.92em">(A harmless pop-up here — but the same trick could run
         <em>dangerous</em> code. That's why real sites must treat your words as text, never code.)</p>
@@ -352,7 +378,40 @@
       if (!winModal.hidden) return;
       document.getElementById('flag').textContent = revealFlag();
       winModal.hidden = false;
+      launchFireworks();
     };
+
+    // Copy the flag straight from the win panel.
+    document.getElementById('flag-copy').addEventListener('click', async (e) => {
+      try { await navigator.clipboard.writeText(revealFlag()); e.target.textContent = '✓ flag copied!'; }
+      catch { e.target.textContent = 'select the flag above'; }
+      setTimeout(() => { e.target.textContent = '📋 Copy flag'; }, 1800);
+    });
+
+    // Fireworks 🎆
+    const fxLayer = document.getElementById('fx');
+    function launchFireworks() {
+      for (let i = 0; i < 8; i++) setTimeout(fireworkBurst, i * 200);
+    }
+    function fireworkBurst() {
+      const fw = document.createElement('div');
+      fw.className = 'firework';
+      fw.style.left = `${10 + Math.random() * 80}%`;
+      fw.style.top = `${10 + Math.random() * 55}%`;
+      const hue = Math.floor(Math.random() * 360);
+      const SPARKS = 18;
+      for (let s = 0; s < SPARKS; s++) {
+        const a = (s / SPARKS) * Math.PI * 2;
+        const dist = 38 + Math.random() * 34;
+        const sp = document.createElement('span');
+        sp.style.setProperty('--dx', `${Math.cos(a) * dist}px`);
+        sp.style.setProperty('--dy', `${Math.sin(a) * dist}px`);
+        sp.style.color = `hsl(${hue + Math.random() * 40}, 100%, 65%)`;
+        fw.appendChild(sp);
+      }
+      fxLayer.appendChild(fw);
+      setTimeout(() => fw.remove(), 1100);
+    }
 
     // The Book of Spells: click to open; shows the current step's spell.
     book.addEventListener('click', () => { bookView.hidden = false; });
