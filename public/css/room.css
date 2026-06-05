@@ -14,7 +14,17 @@
   background:
     radial-gradient(80% 50% at 50% 110%, rgba(255,122,60,0.22), transparent 60%),
     linear-gradient(180deg, #1a0033, #2a0a47 60%, #1a0033);
+  transition: transform 0.5s ease-in, opacity 0.5s ease-in;
 }
+
+/* "Leaving the room": the room zooms out + fades, then a black overlay closes
+   in — the reverse of stepping through the door into the Great Hall. */
+.room.leaving { transform: scale(0.62); opacity: 0; }
+#room-transition {
+  position: fixed; inset: 0; z-index: 80; pointer-events: none;
+  background: #05030d; opacity: 0; transition: opacity 0.5s ease-in;
+}
+#room-transition.on { opacity: 1; }
 
 .room__icon { font-size: clamp(3rem, 12vmin, 5.5rem); filter: drop-shadow(0 0 16px var(--c-cyan)); }
 .room__tag {
