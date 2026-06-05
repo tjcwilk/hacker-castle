@@ -10,165 +10,282 @@
   <link rel="stylesheet" href="/css/theme.css" />
   <link rel="stylesheet" href="/css/room.css" />
   <style>
-    /* A challenge room — taller than the others, so it scrolls. */
-    .room { justify-content: flex-start; padding: 6vmin 5vmin; gap: 1.1rem; }
-    .panel { width: 100%; max-width: 62ch; text-align: left; }
-    .lesson p { margin: 0 0 0.6rem; }
-
-    /* The Echo Crystal: a magical altar you speak into. */
-    .altar {
-      background: radial-gradient(120% 100% at 50% 0%, #2a1b54, #160a2b);
-      border: 1px solid #6a52a0; border-radius: 12px; padding: 1.1rem 1.3rem;
-      box-shadow: 0 0 26px rgba(120, 90, 220, 0.35), inset 0 0 30px rgba(80, 40, 160, 0.25);
+    /* === The room: reuse the hall backdrop, tinted green ================== */
+    .echo-room { /* it is also .room, so room.js handles the leave transition */
+      position: fixed; inset: 0; overflow: hidden; display: block; padding: 0; min-height: 0;
+      background: #0a1610;
     }
-    .altar__title { font-family: var(--font-head); font-size: 0.85rem; color: #d8c8ff; margin: 0 0 0.3rem; text-align: center; }
-    .altar__sub { margin: 0 0 0.9rem; text-align: center; color: #c9bdf0; }
-    .cast-row { display: flex; gap: 0.5rem; }
-    #spell {
-      flex: 1; min-width: 0; padding: 0.6rem 0.7rem; font-size: 1.05rem; font-family: 'Courier New', monospace;
-      border: 2px solid #7a5ac0; border-radius: 6px; background: #0e0820; color: #eafff7; outline: none;
-      box-shadow: inset 0 0 10px rgba(120, 90, 220, 0.4);
-    }
-    #spell:focus { border-color: var(--c-cyan); box-shadow: 0 0 10px var(--c-cyan); }
-    .cast-btn {
-      font-family: var(--font-head); font-size: 0.6rem; color: #1a0033; cursor: pointer; white-space: nowrap;
-      background: linear-gradient(180deg, #b9a3ff, #7a5ac0); border: 0; border-radius: 6px;
-      padding: 0 1rem; box-shadow: 3px 3px 0 #3a2070;
-    }
-    .cast-btn:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 #3a2070; }
-    .wall {
-      margin-top: 0.9rem; padding: 0.8rem 0.9rem; min-height: 2.8rem; font-size: 1.2rem;
-      border-radius: 6px; color: #e9dffb; word-break: break-word;
-      background:
-        repeating-linear-gradient(0deg, rgba(0,0,0,0.18) 0 2px, transparent 2px 26px),
-        linear-gradient(180deg, #3a3158, #2a2342);
-      border: 1px solid #4a3f6e; box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
-    }
-    .wall__label { display: block; font-size: 0.95rem; opacity: 0.7; margin-bottom: 0.3rem; }
-
-    .steps p { margin: 0 0 0.55rem; }
-    .scroll {
-      display: block; margin: 0.5rem 0 0.8rem; padding: 0.7rem 0.9rem; text-align: center;
-      font-family: 'Courier New', monospace; font-size: clamp(0.95rem, 2.6vmin, 1.2rem); color: #ffe9a8;
-      background: linear-gradient(180deg, #4a2f10, #2e1c08); border: 1px dashed #b98a3a; border-radius: 6px;
-      user-select: all;
-    }
-    .copy-btn {
-      cursor: pointer; font-family: inherit; font-size: 0.95rem; color: var(--c-cyan);
-      background: none; border: 1px solid #6a4a90; border-radius: 6px; padding: 0.3rem 0.7rem;
+    .stage { position: absolute; inset: 0; overflow: hidden; font-size: clamp(10px, 1.7vmin, 20px); }
+    .stage__bg {
+      position: absolute; inset: 0; z-index: 0;
+      background: #0e1a14 url('/img/hall.svg') center / cover no-repeat;
+      filter: saturate(1.25) hue-rotate(115deg) brightness(0.92); /* warm stone -> green hall */
     }
 
-    .win {
-      border: 2px solid var(--c-yellow); border-radius: 10px; padding: 1.2rem 1.4rem; text-align: center;
-      background: rgba(255,225,77,0.1); box-shadow: 0 0 26px rgba(255,46,136,0.45); animation: winpop 0.5s ease;
+    .er-banner {
+      position: absolute; left: 50%; top: 2%; transform: translateX(-50%); z-index: 7;
+      font-family: var(--font-head); font-size: 0.66em; color: #eafff2; padding: 0.6em 1.1em;
+      background: linear-gradient(180deg, #1f7a52, #0e3a28); border: 2px solid #5fe0a0; border-radius: 8px;
+      text-shadow: 1px 1px 0 #042018;
     }
-    .win h2 { font-family: var(--font-head); font-size: clamp(0.9rem, 3.5vmin, 1.25rem); color: #fff; margin: 0 0 0.7rem; }
-    .win .flag-box { margin: 0.6rem auto; }
+    .er-tag {
+      position: absolute; left: 50%; top: 9%; transform: translateX(-50%); z-index: 7; margin: 0;
+      font-family: var(--font-ui); font-size: 0.85em; letter-spacing: 0.14em; text-transform: uppercase;
+      color: #9fe9c6; opacity: 0.85;
+    }
+
+    /* The wall where the parrot's words appear (the XSS renders here). */
+    .wall-echo {
+      position: absolute; left: 50%; top: 15%; transform: translateX(-50%); z-index: 4;
+      width: 42%; min-height: 4.4em; padding: 0.7em 0.9em; border-radius: 6px;
+      background: rgba(8, 22, 16, 0.5); border: 1px solid #3a7a5a;
+      box-shadow: inset 0 0 22px rgba(0,0,0,0.45), 0 0 18px rgba(60,200,120,0.18);
+      color: #b6f7d3; text-shadow: 0 0 8px rgba(120,255,180,0.5); font-size: 1.3em; word-break: break-word;
+    }
+    .wall-echo__label {
+      display: block; font-family: var(--font-ui); font-size: 0.6em; letter-spacing: 0.12em;
+      text-transform: uppercase; opacity: 0.55; margin-bottom: 0.4em;
+    }
+
+    /* The parrot, perched in the middle of the room. */
+    .parrot-spot {
+      position: absolute; left: 50%; bottom: 28%; transform: translateX(-50%); z-index: 5;
+      height: min(38vh, 26vw); display: flex; flex-direction: column; align-items: center;
+    }
+    .parrot { height: 100%; width: auto; overflow: visible; }
+    .parrot-speech {
+      position: absolute; bottom: 101%; left: 50%; transform: translateX(-50%);
+      margin: 0; max-width: 16em; text-align: center; font-family: var(--font-ui); font-size: 0.95em; line-height: 1.25;
+      color: #0c2a1c; background: #d8f7e6; border: 2px solid #3a9a6a; border-radius: 10px; padding: 0.45em 0.8em;
+    }
+    .parrot-speech::after {
+      content: ''; position: absolute; top: 100%; left: 50%; transform: translateX(-50%);
+      border: 0.5em solid transparent; border-top-color: #d8f7e6;
+    }
+    /* parrot animations */
+    .pr { transform-box: fill-box; transform-origin: center bottom; animation: pr-bob 2.4s ease-in-out infinite alternate; }
+    .pr-tail { transform-box: fill-box; transform-origin: top center; animation: pr-tail 2s ease-in-out infinite alternate; }
+    .pr-lid { transform-box: fill-box; transform-origin: top; transform: scaleY(0); animation: pr-blink 4s infinite; }
+    .pr-beak-lower { transform-box: fill-box; transform-origin: top center; }
+    .parrot.squawk .pr { animation: pr-squawk 0.4s ease; }
+    .parrot.squawk .pr-beak-lower { animation: pr-open 0.4s ease; }
+    @keyframes pr-bob { from { transform: translateY(0); } to { transform: translateY(-4%); } }
+    @keyframes pr-tail { from { transform: rotate(-5deg); } to { transform: rotate(6deg); } }
+    @keyframes pr-blink { 0%,92%,100% { transform: scaleY(0); } 95% { transform: scaleY(1); } 98% { transform: scaleY(0); } }
+    @keyframes pr-squawk { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-8%); } }
+    @keyframes pr-open { 0%,100% { transform: translateY(0) scaleY(1); } 50% { transform: translateY(30%) scaleY(1.6); } }
+
+    /* The control bar: talk to the parrot. */
+    .talk-bar {
+      position: absolute; left: 50%; bottom: 3.5%; transform: translateX(-50%); z-index: 8;
+      width: min(660px, 90%); padding: 0.85rem 1.1rem; border-radius: 12px; text-align: center;
+      background: rgba(8, 22, 16, 0.92); border: 2px solid #3a9a6a; box-shadow: 0 0 24px rgba(40,180,110,0.3);
+      font-family: var(--font-ui); color: #e8fff0;
+    }
+    .talk-bar .instruction { margin: 0 0 0.55rem; font-size: 1.02rem; line-height: 1.35; }
+    .talk-bar .instruction strong { color: #aef5cf; }
+    .spell-box {
+      display: inline-block; margin: 0 0.4rem 0.6rem 0; padding: 0.4rem 0.7rem; user-select: all; cursor: copy;
+      font-family: 'Courier New', monospace; font-size: 1rem; color: #ffe9a8;
+      background: #14281e; border: 1px dashed #b98a3a; border-radius: 6px;
+    }
+    .copy-btn { cursor: pointer; font-family: inherit; font-size: 0.95rem; color: #8fe9c6;
+      background: none; border: 1px solid #3a9a6a; border-radius: 6px; padding: 0.3rem 0.6rem; }
+    .talk-row { display: flex; gap: 0.5rem; margin-top: 0.2rem; }
+    #say {
+      flex: 1; min-width: 0; padding: 0.55rem 0.7rem; font-size: 1.05rem; font-family: 'Courier New', monospace;
+      border: 2px solid #3a9a6a; border-radius: 6px; background: #0a1610; color: #eafff7; outline: none;
+    }
+    #say:focus { border-color: #6fe0a0; box-shadow: 0 0 8px rgba(110,224,160,0.6); }
+    .say-btn {
+      font-family: var(--font-head); font-size: 0.6rem; color: #06140d; cursor: pointer; white-space: nowrap;
+      background: linear-gradient(180deg, #8fe9b8, #3a9a6a); border: 0; border-radius: 6px; padding: 0 1rem;
+      box-shadow: 3px 3px 0 #0e3a28;
+    }
+    .say-btn:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 #0e3a28; }
+
+    /* Back button (override room.css to sit in the corner). */
+    .echo-room .back { position: absolute; left: 1.4%; top: 2.5%; z-index: 9; margin: 0;
+      font-size: 0.55rem; padding: 0.7em 1em; }
+
+    /* Win modal */
+    .win-modal { position: fixed; inset: 0; z-index: 30; display: flex; align-items: center; justify-content: center;
+      background: rgba(4, 16, 10, 0.82); }
+    .win-modal[hidden] { display: none; }
+    .win-card {
+      width: min(92vw, 470px); text-align: center; padding: 1.5rem 1.6rem; border-radius: 12px;
+      background: #0e2a1c; border: 2px solid var(--c-yellow); box-shadow: 0 0 30px rgba(255,46,136,0.45);
+      font-family: var(--font-ui); color: #e8fff0; animation: winpop 0.5s ease;
+    }
+    .win-card h2 { font-family: var(--font-head); font-size: clamp(0.9rem, 3.5vmin, 1.2rem); color: #fff; margin: 0 0 0.7rem; }
+    .win-card .flag-box { margin: 0.7rem auto; }
+    .win-card .room-btn {
+      display: inline-block; margin-top: 0.8rem; text-decoration: none; font-family: var(--font-head); font-size: 0.65rem;
+      color: #1a0033; background: linear-gradient(180deg, var(--c-yellow), var(--c-orange));
+      box-shadow: 5px 5px 0 #7a0a52; padding: 0.9em 1.3em;
+    }
     @keyframes winpop { from { transform: scale(0.92); opacity: 0; } to { transform: scale(1); opacity: 1; } }
   </style>
 </head>
 <body>
-  <main class="room">
-    <div class="room__icon" aria-hidden="true">🔮</div>
-    <p class="room__tag">Web · Cross-Site Scripting</p>
-    <h1>The Hall of Echoes</h1>
+  <main class="room echo-room">
+    <div class="stage">
+      <div class="stage__bg" aria-hidden="true"></div>
 
-    <div class="panel lesson">
-      <p>Deep in this hall sits an <strong>Echo Crystal</strong>. Whisper to it, and your words appear
-        <strong>echoed upon the wall</strong>.</p>
-      <p>
-        A <em>careful</em> crystal would simply <strong>show</strong> your words. But this one is careless —
-        if you whisper a <strong>spell</strong> (some code), it will actually <strong>cast it</strong>.
-        Tricking a website into running your words as code like this is called
-        <strong>Cross-Site Scripting</strong> (XSS).
-      </p>
-    </div>
+      <a class="back" href="/great-hall">&lt; Back</a>
+      <div class="er-banner">🦜 The Hall of Echoes</div>
+      <p class="er-tag">Web · Cross-Site Scripting</p>
 
-    <div class="panel altar">
-      <h2 class="altar__title">🔮 The Echo Crystal</h2>
-      <p class="altar__sub">Whisper an incantation — the hall echoes it upon the wall.</p>
-      <div class="cast-row">
-        <input id="spell" placeholder="speak here…" autocomplete="off" spellcheck="false" />
-        <button id="cast-btn" class="cast-btn" type="button">Echo ✨</button>
-      </div>
-      <div class="wall">
-        <span class="wall__label">The wall echoes…</span>
+      <!-- The wall: the parrot's words appear here (the XSS renders here). -->
+      <div class="wall-echo">
+        <span class="wall-echo__label">…the wall echoes…</span>
         <span id="echo"></span>
       </div>
-    </div>
 
-    <div class="panel steps">
-      <p><strong>①</strong> First, whisper your <strong>name</strong> and press <em>Echo</em> — it just appears on the wall.</p>
-      <p><strong>② Now cast the forbidden spell.</strong> Copy this exact incantation into the crystal and press <em>Echo</em>:</p>
-      <code class="scroll" id="scroll">&lt;img src=x onerror="castSpell()"&gt;</code>
-      <button id="copy-btn" class="copy-btn" type="button">📜 Copy the spell</button>
-      <p style="margin-top:0.7rem">
-        A careful hall would just print those words. The careless Hall of Echoes will <strong>cast the
-        spell</strong> — running the hidden code <code>castSpell()</code> — and reward you! 🪄
-      </p>
-    </div>
+      <!-- The parrot, perched in the hall -->
+      <div class="parrot-spot">
+        <p class="parrot-speech" id="parrot-speech">Squawk! I repeat anything you say… 🦜</p>
+        <svg class="parrot" viewBox="0 0 200 230" role="img" aria-label="A colourful talking parrot">
+          <defs>
+            <clipPath id="prEye"><circle cx="78" cy="74" r="11"/></clipPath>
+          </defs>
+          <!-- perch -->
+          <rect x="48" y="198" width="104" height="13" rx="6" fill="#6a4a2a" stroke="#3a2812" stroke-width="3"/>
+          <g class="pr">
+            <!-- tail feathers (behind) -->
+            <g class="pr-tail">
+              <path d="M96,150 L78,214 L92,206 Z" fill="#e03a3a" stroke="#3a0e0e" stroke-width="2"/>
+              <path d="M100,152 L100,222 L112,210 Z" fill="#2f7adf" stroke="#10325f" stroke-width="2"/>
+              <path d="M104,150 L122,212 L120,200 Z" fill="#ffd24a" stroke="#7a5a10" stroke-width="2"/>
+            </g>
+            <!-- feet -->
+            <path d="M84,196 l-6,8 m6,-8 l0,9 m0,-9 l6,8" stroke="#caa24a" stroke-width="4" fill="none" stroke-linecap="round"/>
+            <path d="M116,196 l-6,8 m6,-8 l0,9 m0,-9 l6,8" stroke="#caa24a" stroke-width="4" fill="none" stroke-linecap="round"/>
+            <!-- body -->
+            <ellipse cx="102" cy="138" rx="46" ry="54" fill="#2faf5a" stroke="#14401f" stroke-width="3"/>
+            <!-- belly -->
+            <ellipse cx="106" cy="152" rx="28" ry="36" fill="#ffd24a"/>
+            <!-- folded wing -->
+            <path d="M84,98 C58,108 54,150 78,182 C92,170 96,140 96,108 Z" fill="#2f7adf" stroke="#10325f" stroke-width="3"/>
+            <path d="M80,150 C84,160 90,168 96,172" stroke="#10325f" stroke-width="2" fill="none"/>
+            <path d="M76,130 C82,140 88,150 95,156" stroke="#10325f" stroke-width="2" fill="none"/>
+            <!-- head -->
+            <circle cx="92" cy="78" r="38" fill="#2faf5a" stroke="#14401f" stroke-width="3"/>
+            <!-- crest feathers -->
+            <path d="M92,42 q-6,-18 4,-26 q2,16 8,22 Z" fill="#e03a3a" stroke="#3a0e0e" stroke-width="2"/>
+            <path d="M104,44 q2,-16 12,-18 q-4,14 2,20 Z" fill="#ffd24a" stroke="#7a5a10" stroke-width="2"/>
+            <!-- white eye patch -->
+            <ellipse cx="78" cy="76" rx="20" ry="22" fill="#fdfdf5"/>
+            <!-- eye (blinks) -->
+            <g clip-path="url(#prEye)">
+              <circle cx="78" cy="74" r="11" fill="#fff"/>
+              <circle cx="76" cy="76" r="7" fill="#13241c"/>
+              <circle cx="73" cy="72" r="2.5" fill="#fff"/>
+              <rect class="pr-lid" x="66" y="62" width="24" height="24" fill="#2faf5a"/>
+            </g>
+            <!-- beak (hooked) -->
+            <path d="M58,72 C40,70 34,84 46,92 C56,98 66,94 66,86 C66,80 64,74 58,72 Z"
+                  fill="#ff9a2c" stroke="#a85a10" stroke-width="3"/>
+            <path class="pr-beak-lower" d="M50,90 C50,98 60,102 66,96 C62,92 56,90 50,90 Z"
+                  fill="#e07a18" stroke="#a85a10" stroke-width="2"/>
+          </g>
+        </svg>
+      </div>
 
-    <div class="panel win" id="win" hidden>
-      <h2>✨ The hall cast YOUR spell! ✨</h2>
-      <p>That "incantation" was really <strong>computer code</strong>. The careless crystal ran it instead
-        of showing it — that's a Cross-Site Scripting bug. Here is your flag:</p>
-      <div class="flag-box" id="flag"></div>
-      <p>Take it to the <strong>Badges</strong> board in the Great Hall to earn this badge!</p>
-      <p style="opacity:.8;font-size:.95em">
-        (This spell was harmless — but the very same trick could run <em>dangerous</em> code. That's why
-        real websites must always treat your words as text, never as code.)
-      </p>
+      <!-- Talk to the parrot -->
+      <div class="talk-bar">
+        <p class="instruction" id="instruction">
+          This parrot <strong>repeats your words onto the wall</strong>. A careful parrot would show them as
+          plain text — but this one will <strong>run any code</strong> you give it. That's
+          <strong>Cross-Site Scripting</strong>! Tell the parrot to say this magic phrase:
+        </p>
+        <code class="spell-box" id="spell-box">&lt;img src=x onerror="alert('hello')"&gt;</code>
+        <button class="copy-btn" id="copy-btn" type="button">📋 copy</button>
+        <div class="talk-row">
+          <input id="say" placeholder="say something to the parrot…" autocomplete="off" spellcheck="false" />
+          <button id="say-btn" class="say-btn" type="button">Speak 🦜</button>
+        </div>
+      </div>
     </div>
-
-    <a class="back" href="/great-hall">&lt; Back to the Great Hall</a>
   </main>
 
-  <div class="scanlines" aria-hidden="true"></div>
+  <!-- Win -->
+  <div class="win-modal" id="win" hidden>
+    <div class="win-card">
+      <h2>✨ The parrot cast YOUR spell! ✨</h2>
+      <p>That "phrase" was really <strong>computer code</strong>. The careless parrot ran it instead of just
+        saying it — that's a Cross-Site Scripting bug. Here is your flag:</p>
+      <div class="flag-box" id="flag"></div>
+      <p>Enter it on the <strong>Badges</strong> board to earn this badge!</p>
+      <p style="opacity:.8;font-size:.92em">(A harmless pop-up here — but the same trick could run
+        <em>dangerous</em> code. That's why real sites must treat your words as text, never code.)</p>
+      <a class="room-btn" href="/great-hall">Back to the Great Hall</a>
+    </div>
+  </div>
 
   <script src="/js/room.js"></script>
   <script>
-    // --- The Hall of Echoes (XSS lesson) ---------------------------------
-    // INTENTIONALLY vulnerable: the crystal reflects the player's input as HTML
-    // so they can see how cross-site scripting works. It is reflected and
-    // client-side only (it affects nobody but the player's own page), which is
-    // what makes it a safe teaching sandbox. The "magic spell" we hand them is
-    // the classic <img onerror> payload that runs code on a careless page.
-    const SPELL = '<img src=x onerror="castSpell()">';
+    // --- The Hall of Echoes (XSS lesson with a parrot) -------------------
+    // INTENTIONALLY vulnerable: the parrot reflects the player's words onto the
+    // wall as HTML, so they can see cross-site scripting first-hand. It is
+    // reflected + client-side only (affects only the player's own page), which
+    // is what makes it a safe teaching sandbox.
 
-    // The flag is XOR-obfuscated + base64 so it can't just be read from the page
-    // source (that would only repeat the view-source challenge). It is decoded
-    // at runtime, and only revealed once the player's spell actually runs.
+    // Flag is XOR + base64 obfuscated so it can't be read straight from the
+    // page source — only the spell de-obfuscates and reveals it.
     const ENC = 'fXd6fEBPU15kU1pXV2ReWFNUXkhkQlROSWRYVF9eRg==';
     const KEY = 0x3b;
     const revealFlag = () =>
       Array.from(atob(ENC), (c) => String.fromCharCode(c.charCodeAt(0) ^ KEY)).join('');
 
-    const spell = document.getElementById('spell');
+    const say = document.getElementById('say');
     const echo = document.getElementById('echo');
-    const win = document.getElementById('win');
+    const parrot = document.querySelector('.parrot');
+    const speech = document.getElementById('parrot-speech');
+    const instruction = document.getElementById('instruction');
+    const spellBox = document.getElementById('spell-box');
+    const winModal = document.getElementById('win');
+    let step = 1;
 
-    function cast() {
-      // VULNERABLE ON PURPOSE: raw input becomes HTML/code. A safe site would
-      // use textContent (or escape the input) so words are shown, never run.
-      echo.innerHTML = spell.value;
+    function speak() {
+      // VULNERABLE ON PURPOSE: the parrot "repeats" raw input as HTML. A safe
+      // site would use textContent (or escape it) so words show, never run.
+      echo.innerHTML = say.value;
+      parrot.classList.remove('squawk');
+      void parrot.offsetWidth;
+      parrot.classList.add('squawk');
     }
-    document.getElementById('cast-btn').addEventListener('click', cast);
-    spell.addEventListener('keydown', (e) => { if (e.key === 'Enter') cast(); });
+    document.getElementById('say-btn').addEventListener('click', speak);
+    say.addEventListener('keydown', (e) => { if (e.key === 'Enter') speak(); });
 
-    // The hidden spell the incantation runs. Whispering the spell into the
-    // careless crystal makes the page execute this — and reveal the flag.
-    window.castSpell = function () {
-      if (!win.hidden) return;            // only the first time
-      document.getElementById('flag').textContent = revealFlag();
-      win.hidden = false;
-      win.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    // Step 1 → 2: when the player's injected code makes the page alert(), the
+    // demo worked — move them on to the flag spell.
+    const realAlert = window.alert.bind(window);
+    window.alert = function (msg) {
+      realAlert(msg);
+      if (step === 1) {
+        step = 2;
+        speech.textContent = 'Squawk! I RAN your code! Do it again! 🔥';
+        instruction.innerHTML =
+          'You made the parrot run code — a pop-up appeared! 🎉 Now make it cast the ' +
+          '<strong>flag spell</strong>. Tell the parrot to say:';
+        spellBox.textContent = '<img src=x onerror="castSpell()">';
+        say.value = '';
+        say.focus();
+      }
     };
 
-    // Handy "copy the spell" button.
+    // The flag spell. The player wins by getting the parrot to run this.
+    window.castSpell = function () {
+      if (!winModal.hidden) return;
+      document.getElementById('flag').textContent = revealFlag();
+      winModal.hidden = false;
+    };
+
     document.getElementById('copy-btn').addEventListener('click', async (e) => {
-      try { await navigator.clipboard.writeText(SPELL); e.target.textContent = '📜 Copied!'; }
-      catch { e.target.textContent = 'Select the spell above and copy it'; }
-      setTimeout(() => { e.target.textContent = '📜 Copy the spell'; }, 1800);
+      try { await navigator.clipboard.writeText(spellBox.textContent); e.target.textContent = '✓ copied'; }
+      catch { e.target.textContent = 'select it above'; }
+      setTimeout(() => { e.target.textContent = '📋 copy'; }, 1600);
     });
   </script>
 </body>
