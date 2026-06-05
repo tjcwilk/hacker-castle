@@ -34,29 +34,18 @@
       color: #9fe9c6; opacity: 0.85;
     }
 
-    /* The wall where the parrot's words appear (the XSS renders here). */
-    .wall-echo {
-      position: absolute; left: 50%; top: 15%; transform: translateX(-50%); z-index: 4;
-      width: 42%; min-height: 4.4em; padding: 0.7em 0.9em; border-radius: 6px;
-      background: rgba(8, 22, 16, 0.5); border: 1px solid #3a7a5a;
-      box-shadow: inset 0 0 22px rgba(0,0,0,0.45), 0 0 18px rgba(60,200,120,0.18);
-      color: #b6f7d3; text-shadow: 0 0 8px rgba(120,255,180,0.5); font-size: 1.3em; word-break: break-word;
-    }
-    .wall-echo__label {
-      display: block; font-family: var(--font-ui); font-size: 0.6em; letter-spacing: 0.12em;
-      text-transform: uppercase; opacity: 0.55; margin-bottom: 0.4em;
-    }
-
     /* The parrot, perched in the middle of the room. */
     .parrot-spot {
-      position: absolute; left: 50%; bottom: 28%; transform: translateX(-50%); z-index: 5;
-      height: min(38vh, 26vw); display: flex; flex-direction: column; align-items: center;
+      position: absolute; left: 50%; bottom: 25%; transform: translateX(-50%); z-index: 5;
+      height: min(42vh, 30vw); display: flex; flex-direction: column; align-items: center;
     }
     .parrot { height: 100%; width: auto; overflow: visible; }
+    /* The parrot's speech bubble — it repeats your words here (the XSS target). */
     .parrot-speech {
-      position: absolute; bottom: 101%; left: 50%; transform: translateX(-50%);
-      margin: 0; max-width: 16em; text-align: center; font-family: var(--font-ui); font-size: 0.95em; line-height: 1.25;
-      color: #0c2a1c; background: #d8f7e6; border: 2px solid #3a9a6a; border-radius: 10px; padding: 0.45em 0.8em;
+      position: absolute; bottom: 99%; left: 50%; transform: translateX(-50%);
+      margin: 0; min-width: 7em; max-width: 18em; text-align: center; word-break: break-word;
+      font-family: var(--font-ui); font-size: 1em; line-height: 1.25;
+      color: #0c2a1c; background: #d8f7e6; border: 2px solid #3a9a6a; border-radius: 10px; padding: 0.5em 0.9em;
     }
     .parrot-speech::after {
       content: ''; position: absolute; top: 100%; left: 50%; transform: translateX(-50%);
@@ -84,14 +73,65 @@
     }
     .talk-bar .instruction { margin: 0 0 0.55rem; font-size: 1.02rem; line-height: 1.35; }
     .talk-bar .instruction strong { color: #aef5cf; }
-    .spell-box {
-      display: inline-block; margin: 0 0.4rem 0.6rem 0; padding: 0.4rem 0.7rem; user-select: all; cursor: copy;
-      font-family: 'Courier New', monospace; font-size: 1rem; color: #ffe9a8;
-      background: #14281e; border: 1px dashed #b98a3a; border-radius: 6px;
-    }
-    .copy-btn { cursor: pointer; font-family: inherit; font-size: 0.95rem; color: #8fe9c6;
-      background: none; border: 1px solid #3a9a6a; border-radius: 6px; padding: 0.3rem 0.6rem; }
     .talk-row { display: flex; gap: 0.5rem; margin-top: 0.2rem; }
+
+    /* The Book of Spells — on a table to the RIGHT of the parrot, glowing to
+       draw the eye. */
+    .book-station { position: absolute; right: 7%; bottom: 19%; z-index: 6;
+      display: flex; flex-direction: column; align-items: center; }
+    .spellbook {
+      position: relative; cursor: pointer; width: 8.4em; height: 10.4em; padding: 0; border: 0; color: inherit;
+      background: linear-gradient(180deg, #6a3f1e, #45280f); border-radius: 4px 10px 10px 4px;
+      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.4em;
+      animation: book-float 2.6s ease-in-out infinite alternate, book-glow 1.7s ease-in-out infinite alternate;
+    }
+    .spellbook:hover { filter: brightness(1.12); }
+    .spellbook__spine { position: absolute; left: 0; top: 0; bottom: 0; width: 0.8em;
+      background: #3a2210; border-radius: 4px 0 0 4px; box-shadow: inset -2px 0 3px rgba(0,0,0,0.5); }
+    .spellbook__emblem { font-size: 1.6em; color: #ffd98a; line-height: 1; }
+    .spellbook__title { font-family: var(--font-head); font-size: 0.74em; color: #ffe1a8; text-shadow: 1px 1px 0 #2a1808; }
+    .spellbook__hint { font-family: var(--font-ui); font-size: 0.62em; color: #fff0cf; opacity: 0.95; }
+    @keyframes book-float { from { transform: translateY(0) rotate(-3deg); } to { transform: translateY(-7%) rotate(-3deg); } }
+    @keyframes book-glow {
+      from { box-shadow: 0 0 0 3px #2a1808, 0 9px 18px rgba(0,0,0,0.5), 0 0 16px rgba(255,180,80,0.4); }
+      to   { box-shadow: 0 0 0 3px #2a1808, 0 9px 18px rgba(0,0,0,0.5), 0 0 40px rgba(255,215,120,0.95); }
+    }
+    /* the table it rests on */
+    .book-table { position: relative; width: 12em; height: 3.2em; margin-top: -0.2em; }
+    .book-table__top { position: absolute; top: 0; left: 0; right: 0; height: 1.1em;
+      background: linear-gradient(180deg, #7a5230, #563818); border: 2px solid #341f0e; border-radius: 3px;
+      box-shadow: 0 3px 6px rgba(0,0,0,0.55); }
+    .book-table__leg { position: absolute; top: 1em; width: 0.9em; height: 2.2em;
+      background: linear-gradient(90deg, #563818, #3f280f); border: 2px solid #341f0e; }
+    .book-table__leg--l { left: 16%; } .book-table__leg--r { right: 16%; }
+
+    /* The opened book (shown when the book is clicked). */
+    .book-view { position: fixed; inset: 0; z-index: 25; flex-direction: column; gap: 1rem;
+      display: flex; align-items: center; justify-content: center; background: rgba(4, 12, 8, 0.72); }
+    .book-view[hidden] { display: none; }
+    .book-spread {
+      display: flex; width: min(92vw, 560px); aspect-ratio: 8 / 5; border-radius: 8px; overflow: hidden;
+      box-shadow: 0 0 0 7px #3a2210, 0 16px 44px rgba(0,0,0,0.6); animation: book-open 0.4s ease;
+    }
+    .page {
+      flex: 1; padding: 1.3rem; color: #4a3210; font-family: Georgia, 'Times New Roman', serif; text-align: center;
+      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.7rem;
+      background: radial-gradient(120% 120% at 50% 0%, #f6ead0, #e4d09e);
+    }
+    .page--left { box-shadow: inset -16px 0 26px rgba(120,90,40,0.35); }
+    .page--right { box-shadow: inset 16px 0 26px rgba(120,90,40,0.35); }
+    .page__deco { color: #a07a30; letter-spacing: 0.35em; margin: 0; }
+    .page p { margin: 0; font-size: 1.05rem; }
+    .book__spell {
+      user-select: all; font-family: 'Courier New', monospace; font-size: clamp(0.85rem, 2.5vmin, 1.1rem);
+      color: #5a2a0a; background: rgba(160,120,40,0.16); border: 1px dashed #a07a30; border-radius: 5px;
+      padding: 0.55rem 0.6rem; word-break: break-word;
+    }
+    .book__copy { cursor: pointer; font-family: inherit; font-size: 0.95rem; color: #4a3210;
+      background: #e8d49a; border: 1px solid #a07a30; border-radius: 6px; padding: 0.35rem 0.8rem; }
+    .book-close { cursor: pointer; font-family: var(--font-ui); font-size: 1rem; color: #e8fff0;
+      background: rgba(0,0,0,0.45); border: 1px solid #3a9a6a; border-radius: 6px; padding: 0.4rem 0.9rem; }
+    @keyframes book-open { from { transform: scale(0.75) rotateX(35deg); opacity: 0; } to { transform: scale(1) rotateX(0); opacity: 1; } }
     #say {
       flex: 1; min-width: 0; padding: 0.55rem 0.7rem; font-size: 1.05rem; font-family: 'Courier New', monospace;
       border: 2px solid #3a9a6a; border-radius: 6px; background: #0a1610; color: #eafff7; outline: none;
@@ -136,15 +176,10 @@
       <div class="er-banner">🦜 The Hall of Echoes</div>
       <p class="er-tag">Web · Cross-Site Scripting</p>
 
-      <!-- The wall: the parrot's words appear here (the XSS renders here). -->
-      <div class="wall-echo">
-        <span class="wall-echo__label">…the wall echoes…</span>
-        <span id="echo"></span>
-      </div>
-
-      <!-- The parrot, perched in the hall -->
+      <!-- The parrot, perched in the hall. It repeats your words in its speech
+           bubble — and that bubble is where the XSS renders. -->
       <div class="parrot-spot">
-        <p class="parrot-speech" id="parrot-speech">Squawk! I repeat anything you say… 🦜</p>
+        <div class="parrot-speech" id="echo">Squawk! Tell me to say something! 🦜</div>
         <svg class="parrot" viewBox="0 0 200 230" role="img" aria-label="A colourful talking parrot">
           <defs>
             <clipPath id="prEye"><circle cx="78" cy="74" r="11"/></clipPath>
@@ -192,15 +227,29 @@
         </svg>
       </div>
 
+      <!-- The Book of Spells, on a table to the right of the parrot -->
+      <div class="book-station">
+        <button class="spellbook" id="book" type="button" aria-label="Open the Book of Spells">
+          <span class="spellbook__spine" aria-hidden="true"></span>
+          <span class="spellbook__emblem" aria-hidden="true">✦</span>
+          <span class="spellbook__title">Spells</span>
+          <span class="spellbook__hint">click to open</span>
+        </button>
+        <div class="book-table" aria-hidden="true">
+          <span class="book-table__top"></span>
+          <span class="book-table__leg book-table__leg--l"></span>
+          <span class="book-table__leg book-table__leg--r"></span>
+        </div>
+      </div>
+
       <!-- Talk to the parrot -->
       <div class="talk-bar">
         <p class="instruction" id="instruction">
-          This parrot <strong>repeats your words onto the wall</strong>. A careful parrot would show them as
-          plain text — but this one will <strong>run any code</strong> you give it. That's
-          <strong>Cross-Site Scripting</strong>! Tell the parrot to say this magic phrase:
+          This parrot <strong>repeats whatever you say</strong> in its speech bubble. A careful parrot would
+          take care what it repeats, but this one will <strong>repeat anything you say to it</strong> — even
+          secret code. That's <strong>Cross-Site Scripting</strong>! Open the 📖 <strong>Book of Spells</strong>,
+          then speak the spell to the parrot.
         </p>
-        <code class="spell-box" id="spell-box">&lt;img src=x onerror="alert('hello')"&gt;</code>
-        <button class="copy-btn" id="copy-btn" type="button">📋 copy</button>
         <div class="talk-row">
           <input id="say" placeholder="say something to the parrot…" autocomplete="off" spellcheck="false" />
           <button id="say-btn" class="say-btn" type="button">Speak 🦜</button>
@@ -208,6 +257,21 @@
       </div>
     </div>
   </main>
+
+  <!-- The opened Book of Spells -->
+  <div class="book-view" id="bookview" hidden>
+    <div class="book-spread">
+      <div class="page page--left">
+        <p class="page__deco">✦ ❦ ✦</p>
+        <p>Whisper this incantation<br />to the parrot…</p>
+      </div>
+      <div class="page page--right">
+        <code class="book__spell" id="book-spell">&lt;img src=x onerror="alert('hello')"&gt;</code>
+        <button class="book__copy" id="book-copy" type="button">📋 copy</button>
+      </div>
+    </div>
+    <button class="book-close" id="book-close" type="button">close the book</button>
+  </div>
 
   <!-- Win -->
   <div class="win-modal" id="win" hidden>
@@ -239,12 +303,13 @@
       Array.from(atob(ENC), (c) => String.fromCharCode(c.charCodeAt(0) ^ KEY)).join('');
 
     const say = document.getElementById('say');
-    const echo = document.getElementById('echo');
+    const echo = document.getElementById('echo');   // the parrot's speech bubble
     const parrot = document.querySelector('.parrot');
-    const speech = document.getElementById('parrot-speech');
     const instruction = document.getElementById('instruction');
-    const spellBox = document.getElementById('spell-box');
     const winModal = document.getElementById('win');
+    const book = document.getElementById('book');
+    const bookView = document.getElementById('bookview');
+    const bookSpell = document.getElementById('book-spell');
     let step = 1;
 
     function speak() {
@@ -265,26 +330,31 @@
       realAlert(msg);
       if (step === 1) {
         step = 2;
-        speech.textContent = 'Squawk! I RAN your code! Do it again! 🔥';
+        echo.textContent = 'Squawk! I RAN your code! Do it again! 🔥';
         instruction.innerHTML =
-          'You made the parrot run code — a pop-up appeared! 🎉 Now make it cast the ' +
-          '<strong>flag spell</strong>. Tell the parrot to say:';
-        spellBox.textContent = '<img src=x onerror="castSpell()">';
+          'You made the parrot run code — a pop-up appeared! 🎉 Now… can you get the parrot to repeat the ' +
+          '<strong>flag spell</strong> instead? Open the 📖 <strong>Book of Spells</strong> again!';
+        bookSpell.textContent = '<img src=x onerror="castFlagSpell()">';
         say.value = '';
         say.focus();
       }
     };
 
     // The flag spell. The player wins by getting the parrot to run this.
-    window.castSpell = function () {
+    window.castFlagSpell = function () {
       if (!winModal.hidden) return;
       document.getElementById('flag').textContent = revealFlag();
       winModal.hidden = false;
     };
 
-    document.getElementById('copy-btn').addEventListener('click', async (e) => {
-      try { await navigator.clipboard.writeText(spellBox.textContent); e.target.textContent = '✓ copied'; }
-      catch { e.target.textContent = 'select it above'; }
+    // The Book of Spells: click to open; shows the current step's spell.
+    book.addEventListener('click', () => { bookView.hidden = false; });
+    document.getElementById('book-close').addEventListener('click', () => { bookView.hidden = true; });
+    bookView.addEventListener('click', (e) => { if (e.target === bookView) bookView.hidden = true; });
+
+    document.getElementById('book-copy').addEventListener('click', async (e) => {
+      try { await navigator.clipboard.writeText(bookSpell.textContent); e.target.textContent = '✓ copied'; }
+      catch { e.target.textContent = 'select the spell'; }
       setTimeout(() => { e.target.textContent = '📋 copy'; }, 1600);
     });
   </script>
