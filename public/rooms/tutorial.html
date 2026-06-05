@@ -9,23 +9,71 @@
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/css/theme.css" />
   <link rel="stylesheet" href="/css/room.css" />
+  <style>
+    /* Tutorial Chamber — a calm BLUE room. */
+    .scene--tutorial {
+      --bg-filter: sepia(1) hue-rotate(178deg) saturate(2.4) brightness(0.82);
+      --banner-bg: linear-gradient(180deg, #2f5a9a, #16335e);
+      --banner-edge: #7fb8ff;
+      --tag-color: #aaccff;
+    }
+    /* The instruction widget is a cork notice board pinned to the wall. */
+    .scene--tutorial .scene__panel {
+      padding: 1.5rem; border-radius: 6px; color: #2a2014;
+      border: 0.7em solid #5e3f22;
+      background:
+        radial-gradient(circle, rgba(0,0,0,0.06) 1px, transparent 1.6px) 0 0 / 11px 11px,
+        linear-gradient(180deg, #cfa672, #b78a50);
+      box-shadow: 0 14px 32px rgba(0,0,0,0.6), inset 0 0 34px rgba(60,38,10,0.3);
+    }
+    /* the pinned paper note */
+    .note {
+      position: relative; background: #fffdf2; color: #2a2418; padding: 1.4rem 1.5rem 1.5rem;
+      border-radius: 2px; box-shadow: 0 7px 16px rgba(0,0,0,0.4); transform: rotate(-1.2deg);
+    }
+    .note::before { /* the push-pin */
+      content: ''; position: absolute; top: -11px; left: 50%; transform: translateX(-50%);
+      width: 20px; height: 20px; border-radius: 50%;
+      background: radial-gradient(circle at 35% 30%, #ff9a9a, #c62f2f);
+      box-shadow: 0 3px 4px rgba(0,0,0,0.45), inset -2px -2px 3px rgba(0,0,0,0.3);
+    }
+    .note h2 { font-family: var(--font-head); font-size: clamp(0.75rem, 2.8vmin, 1rem); color: #7a3a10; margin: 0.2rem 0 0.8rem; }
+    .note p { color: #2a2418; }
+    .note strong { color: #111; }
+    .note code { color: #5a2a0a; background: rgba(120,90,40,0.16); }
+  </style>
 </head>
 <body>
-  <main class="room">
-    <div class="room__icon" aria-hidden="true">🎓</div>
-    <p class="room__tag">Tutorial</p>
-    <h1>The Tutorial Chamber</h1>
-    <p>
-      Welcome, new hacker! Every challenge hides a secret <strong>flag</strong> — a
-      code that looks like <code>FLAG{...}</code>. Find it, then type it into the
-      <strong>Badges</strong> board in the Great Hall to light up that challenge's badge.
-    </p>
-    <p>Here is your very first flag — go ahead and copy it:</p>
-    <div class="flag-box">FLAG{welcome_to_hacker_castle}</div>
-    <p>Head back, enter it on the Badges board, and earn your first badge! 🏅</p>
-    <a class="back" href="/great-hall">&lt; Back to the Great Hall</a>
+  <main class="room scene scene--tutorial">
+    <div class="scene__stage">
+      <div class="scene__bg" aria-hidden="true"></div>
+
+      <a class="back" href="/great-hall">&lt; Back</a>
+      <div class="scene__banner">🎓 The Tutorial Chamber</div>
+      <p class="scene__tag">Tutorial</p>
+
+      <div class="scene__panel">
+        <div class="note">
+          <h2>Notice</h2>
+          <p>Welcome, new hacker! Every challenge hides a secret <strong>flag</strong> — a code that looks like
+            <code>FLAG{...}</code>. Find it, then type it into the <strong>Badges</strong> board in the Great Hall
+            to light up that challenge's badge.</p>
+          <p>Here is your very first flag — go ahead and copy it:</p>
+          <div class="flag-box" id="flag">FLAG{welcome_to_hacker_castle}</div>
+          <button class="scene__copy" id="copy" type="button">📋 Copy flag</button>
+          <p>Head back, enter it on the Badges board, and earn your first badge! 🏅</p>
+        </div>
+      </div>
+    </div>
   </main>
-  <div class="scanlines" aria-hidden="true"></div>
+
   <script src="/js/room.js"></script>
+  <script>
+    document.getElementById('copy').addEventListener('click', async (e) => {
+      try { await navigator.clipboard.writeText(document.getElementById('flag').textContent); e.target.textContent = '✓ flag copied!'; }
+      catch { e.target.textContent = 'select the flag above'; }
+      setTimeout(() => { e.target.textContent = '📋 Copy flag'; }, 1800);
+    });
+  </script>
 </body>
 </html>

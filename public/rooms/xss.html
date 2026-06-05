@@ -106,7 +106,7 @@
     .book-table__leg--l { left: 16%; } .book-table__leg--r { right: 16%; }
 
     /* The opened book (shown when the book is clicked). */
-    .book-view { position: fixed; inset: 0; z-index: 25; flex-direction: column; gap: 1rem;
+    .book-view { position: fixed; inset: 0; z-index: 85; flex-direction: column; gap: 1rem;
       display: flex; align-items: center; justify-content: center; background: rgba(4, 12, 8, 0.72); }
     .book-view[hidden] { display: none; }
     .book-spread {
@@ -144,12 +144,8 @@
     }
     .say-btn:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 #0e3a28; }
 
-    /* Back button (override room.css to sit in the corner). */
-    .echo-room .back { position: absolute; left: 1.4%; top: 2.5%; z-index: 9; margin: 0;
-      font-size: 0.55rem; padding: 0.7em 1em; }
-
     /* Win modal */
-    .win-modal { position: fixed; inset: 0; z-index: 30; display: flex; align-items: center; justify-content: center;
+    .win-modal { position: fixed; inset: 0; z-index: 90; display: flex; align-items: center; justify-content: center;
       background: rgba(4, 16, 10, 0.82); }
     .win-modal[hidden] { display: none; }
     .win-card {
@@ -160,10 +156,11 @@
     .win-card h2 { font-family: var(--font-head); font-size: clamp(0.9rem, 3.5vmin, 1.2rem); color: #fff; margin: 0 0 0.7rem; }
     /* The flag — bold and poppy so it stands out. */
     .win-card .flag-box {
-      display: inline-block; margin: 0.7rem auto 0.3rem; user-select: all; letter-spacing: 0.02em;
-      font-family: 'Courier New', monospace; font-weight: 800; font-size: clamp(1.1rem, 3.4vmin, 1.6rem); color: #1a0033;
+      display: inline-block; max-width: 100%; box-sizing: border-box; overflow-wrap: anywhere;
+      margin: 0.7rem auto 0.3rem; user-select: all; letter-spacing: 0.01em;
+      font-family: 'Courier New', monospace; font-weight: 800; font-size: clamp(0.9rem, 2.8vmin, 1.25rem); color: #1a0033;
       background: linear-gradient(180deg, var(--c-yellow), var(--c-orange));
-      padding: 0.5em 1em; border-radius: 8px; box-shadow: 0 0 26px rgba(255,46,136,0.6);
+      padding: 0.5em 0.9em; border-radius: 8px; box-shadow: 0 0 26px rgba(255,46,136,0.6);
     }
     .flag-copy {
       display: block; margin: 0.4rem auto 0.2rem; cursor: pointer; font-family: var(--font-ui); font-size: 0.95rem;
@@ -177,7 +174,7 @@
     @keyframes winpop { from { transform: scale(0.92); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 
     /* Fireworks when you win. */
-    .fx { position: fixed; inset: 0; z-index: 40; pointer-events: none; overflow: hidden; }
+    .fx { position: fixed; inset: 0; z-index: 95; pointer-events: none; overflow: hidden; }
     .firework { position: absolute; width: 0; height: 0; }
     .firework span {
       position: absolute; left: 0; top: 0; width: 6px; height: 6px; border-radius: 50%;

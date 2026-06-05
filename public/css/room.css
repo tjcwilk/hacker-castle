@@ -26,6 +26,49 @@
 }
 #room-transition.on { opacity: 1; }
 
+/* ==========================================================================
+   Immersive challenge room ("scene") — a basic-3D stone hall reusing the same
+   backdrop as the Great Hall, tinted a different colour per room. A page uses
+   <main class="room scene scene--NAME"> and sets --bg-filter, --banner-bg, etc.
+   It is also .room, so the leave transition above still applies.
+   ========================================================================== */
+.scene { position: fixed; inset: 0; overflow: hidden; display: block; padding: 0; min-height: 0; background: #0a0e14; }
+.scene__stage { position: absolute; inset: 0; overflow: hidden; font-size: clamp(10px, 1.7vmin, 20px); }
+.scene__bg {
+  position: absolute; inset: 0; z-index: 0;
+  background: #140a26 url('/img/hall.svg') center / cover no-repeat; filter: var(--bg-filter, none);
+}
+.scene__banner {
+  position: absolute; left: 50%; top: 2%; transform: translateX(-50%); z-index: 7;
+  font-family: var(--font-head); font-size: 0.66em; color: #fff; padding: 0.6em 1.1em; border-radius: 8px;
+  background: var(--banner-bg, linear-gradient(180deg, #3a3f7a, #191d44));
+  border: 2px solid var(--banner-edge, #9fb4ff); text-shadow: 1px 1px 0 #0a0c1e;
+}
+.scene__tag {
+  position: absolute; left: 50%; top: 9%; transform: translateX(-50%); z-index: 7; margin: 0;
+  font-family: 'Segoe UI', system-ui, sans-serif; font-size: 0.85em; letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--tag-color, #c4d2ff); opacity: 0.85;
+}
+.scene__panel {
+  position: absolute; left: 50%; top: 53%; transform: translate(-50%, -50%); z-index: 6;
+  width: min(640px, 86%); max-height: 72%; overflow-y: auto; padding: 1.4rem 1.6rem; border-radius: 14px;
+  text-align: center; font-family: 'Segoe UI', system-ui, sans-serif; -webkit-font-smoothing: antialiased; color: #eef2ff;
+  background: var(--panel-bg, rgba(10, 14, 30, 0.92)); border: 2px solid var(--panel-edge, #4a5ba0);
+  box-shadow: 0 0 28px var(--panel-glow, rgba(80,110,220,0.32));
+}
+.scene__panel h2 { font-family: var(--font-head); font-size: clamp(0.9rem, 3.4vmin, 1.2rem); color: #fff; margin: 0 0 0.8rem; }
+.scene__panel p { margin: 0 0 0.7rem; line-height: 1.5; }
+.scene__panel p:last-child { margin-bottom: 0; }
+.scene__panel strong { color: #fff; }
+.scene__panel code { font-family: 'Courier New', monospace; color: var(--tag-color, #c4d2ff);
+  background: rgba(255,255,255,0.1); padding: 0.05em 0.4em; border-radius: 4px; }
+.scene__panel .flag-box { display: inline-block; margin: 0.7rem auto 0.3rem; }
+.scene__copy {
+  display: block; margin: 0.3rem auto 0.5rem; cursor: pointer; font-family: 'Segoe UI', sans-serif; font-size: 0.95rem;
+  color: #1a0033; background: var(--accent2, #b9d2ff); border: 1px solid #6a7ac0; border-radius: 6px; padding: 0.35rem 0.9rem;
+}
+/* (the back button is the single canonical .room .back, defined below) */
+
 .room__icon { font-size: clamp(3rem, 12vmin, 5.5rem); filter: drop-shadow(0 0 16px var(--c-cyan)); }
 .room__tag {
   margin: 0; text-transform: uppercase; letter-spacing: 0.18em;
@@ -50,13 +93,15 @@
   padding: 0.55em 1em; border-radius: 6px; box-shadow: 0 0 22px rgba(255,46,136,0.5);
 }
 
+/* The "back" button — one canonical style for EVERY room: a small gold button
+   pinned to the top-left corner. z-index 70 keeps it above the CRT scanlines. */
 .room .back {
-  margin-top: 0.4rem; text-decoration: none;
-  font-family: var(--font-head); font-size: 0.7rem; color: #1a0033;
+  position: absolute; left: 1.4%; top: 2.5%; z-index: 70; margin: 0; text-decoration: none;
+  font-family: var(--font-head); font-size: 0.55rem; color: #1a0033;
   background: linear-gradient(180deg, var(--c-yellow), var(--c-orange));
-  box-shadow: 6px 6px 0 #7a0a52; padding: 1em 1.5em;
+  box-shadow: 4px 4px 0 #7a0a52; padding: 0.7em 1em;
 }
-.room .back:active { transform: translate(4px, 4px); box-shadow: 2px 2px 0 #7a0a52; }
+.room .back:active { transform: translate(3px, 3px); box-shadow: 1px 1px 0 #7a0a52; }
 
 /* Keep the CRT scanlines on the background + heading, but lift the readable
    content (tag, text, flag, button) above them so it stays sharp — matching the
@@ -64,5 +109,4 @@
    scanline overlay directly.) */
 .room__tag,
 .room p,
-.room .flag-box,
-.room .back { position: relative; z-index: 70; }
+.room .flag-box { position: relative; z-index: 70; }

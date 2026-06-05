@@ -42,11 +42,14 @@ body {
 }
 
 /* --- Header bits --------------------------------------------------------- */
+/* Styled like the room "back" buttons (looks better than a plain text link). */
 .hall-exit {
-  position: absolute; left: 1.4%; top: 2.5%; z-index: 8;
-  font-family: var(--font-ui); font-size: 0.85em; color: #e7d6b0; text-decoration: none; opacity: 0.85;
+  position: absolute; left: 1.4%; top: 2.5%; z-index: 8; text-decoration: none;
+  font-family: var(--font-head); font-size: 0.55em; color: #1a0033;
+  background: linear-gradient(180deg, var(--c-yellow), var(--c-orange));
+  box-shadow: 4px 4px 0 #7a0a52; padding: 0.7em 1em;
 }
-.hall-exit:hover { color: var(--accent); text-decoration: underline; }
+.hall-exit:active { transform: translate(3px, 3px); box-shadow: 1px 1px 0 #7a0a52; }
 .hall-welcome {
   position: absolute; right: 1.6%; top: 2.5%; z-index: 8; margin: 0;
   font-family: var(--font-ui); font-size: 0.85em; color: #e7d6b0;
