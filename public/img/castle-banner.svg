@@ -1,0 +1,105 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 460" width="1200" height="460" role="img" aria-label="Hacker Castle">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"   stop-color="#1a0033"/>
+      <stop offset="46%"  stop-color="#2a0a47"/>
+      <stop offset="72%"  stop-color="#3d0a5b"/>
+      <stop offset="100%" stop-color="#1a0033"/>
+    </linearGradient>
+    <radialGradient id="sunset" cx="50%" cy="100%" r="70%">
+      <stop offset="0%"  stop-color="#ff7a3c" stop-opacity="0.55"/>
+      <stop offset="34%" stop-color="#ff2e88" stop-opacity="0.28"/>
+      <stop offset="70%" stop-color="#ff2e88" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="cyanGlow" x="-40%" y="-40%" width="180%" height="180%">
+      <feDropShadow dx="0" dy="0" stdDeviation="5" flood-color="#29e7ff" flood-opacity="0.9"/>
+    </filter>
+    <filter id="pinkGlow" x="-30%" y="-80%" width="160%" height="260%">
+      <feDropShadow dx="0" dy="0" stdDeviation="6" flood-color="#ff2e88" flood-opacity="0.95"/>
+    </filter>
+    <pattern id="scan" width="4" height="4" patternUnits="userSpaceOnUse">
+      <rect width="4" height="2" fill="#000" opacity="0.12"/>
+    </pattern>
+  </defs>
+
+  <!-- Sky + sunset glow -->
+  <rect x="0" y="0" width="1200" height="460" fill="url(#sky)"/>
+  <rect x="0" y="0" width="1200" height="460" fill="url(#sunset)"/>
+
+  <!-- Neon perspective grid floor -->
+  <g stroke-width="2" fill="none">
+    <g stroke="#29e7ff" opacity="0.35">
+      <line x1="0" y1="366" x2="1200" y2="366"/>
+      <line x1="0" y1="375" x2="1200" y2="375"/>
+      <line x1="0" y1="387" x2="1200" y2="387"/>
+      <line x1="0" y1="403" x2="1200" y2="403"/>
+      <line x1="0" y1="424" x2="1200" y2="424"/>
+      <line x1="0" y1="450" x2="1200" y2="450"/>
+    </g>
+    <g stroke="#ff2e88" opacity="0.30">
+      <line x1="600" y1="360" x2="-200" y2="460"/>
+      <line x1="600" y1="360" x2="-20"  y2="460"/>
+      <line x1="600" y1="360" x2="160"  y2="460"/>
+      <line x1="600" y1="360" x2="320"  y2="460"/>
+      <line x1="600" y1="360" x2="470"  y2="460"/>
+      <line x1="600" y1="360" x2="600"  y2="460"/>
+      <line x1="600" y1="360" x2="730"  y2="460"/>
+      <line x1="600" y1="360" x2="880"  y2="460"/>
+      <line x1="600" y1="360" x2="1040" y2="460"/>
+      <line x1="600" y1="360" x2="1220" y2="460"/>
+      <line x1="600" y1="360" x2="1400" y2="460"/>
+    </g>
+  </g>
+
+  <!-- Castle (neon-edged) -->
+  <g filter="url(#cyanGlow)" fill="#514a85" stroke="#211a47" stroke-width="3">
+    <!-- bodies -->
+    <rect x="460" y="230" width="46" height="130"/>            <!-- tower L -->
+    <rect x="506" y="275" width="54" height="85"/>             <!-- wall 1 -->
+    <rect x="560" y="180" width="80" height="180"/>            <!-- main keep -->
+    <rect x="640" y="275" width="54" height="85"/>             <!-- wall 2 -->
+    <rect x="694" y="230" width="46" height="130"/>            <!-- tower R -->
+
+    <!-- crenellations -->
+    <rect x="460" y="216" width="12" height="14"/>
+    <rect x="478" y="216" width="12" height="14"/>
+    <rect x="494" y="216" width="12" height="14"/>
+    <rect x="508" y="263" width="12" height="12"/>
+    <rect x="528" y="263" width="12" height="12"/>
+    <rect x="548" y="263" width="12" height="12"/>
+    <rect x="562" y="164" width="14" height="16"/>
+    <rect x="584" y="164" width="14" height="16"/>
+    <rect x="606" y="164" width="14" height="16"/>
+    <rect x="624" y="164" width="14" height="16"/>
+    <rect x="642" y="263" width="12" height="12"/>
+    <rect x="662" y="263" width="12" height="12"/>
+    <rect x="682" y="263" width="12" height="12"/>
+    <rect x="694" y="216" width="12" height="14"/>
+    <rect x="712" y="216" width="12" height="14"/>
+    <rect x="728" y="216" width="12" height="14"/>
+
+    <!-- gate -->
+    <path d="M578,360 L578,318 Q578,300 600,300 Q622,300 622,318 L622,360 Z"
+          fill="#160a2b" stroke="#160a2b"/>
+
+    <!-- glowing windows -->
+    <rect x="472" y="266" width="14" height="22" fill="#29e7ff" stroke="none"/>
+    <rect x="712" y="266" width="14" height="22" fill="#29e7ff" stroke="none"/>
+    <rect x="593" y="214" width="14" height="20" fill="#29e7ff" stroke="none"/>
+
+    <!-- flag -->
+    <line x1="600" y1="180" x2="600" y2="146" stroke="#211a47" stroke-width="4"/>
+    <path d="M600,148 L632,156 L600,164 Z" fill="#ff7a3c" stroke="#211a47" stroke-width="2"/>
+  </g>
+
+  <!-- CRT scanlines -->
+  <rect x="0" y="0" width="1200" height="460" fill="url(#scan)"/>
+
+  <!-- Title -->
+  <text x="600" y="92" text-anchor="middle"
+        font-family="'Courier New', monospace" font-weight="bold"
+        font-size="66" letter-spacing="6" fill="#ffffff" filter="url(#pinkGlow)">HACKER CASTLE</text>
+  <text x="600" y="124" text-anchor="middle"
+        font-family="'Courier New', monospace" font-size="20" letter-spacing="4"
+        fill="#29e7ff">cyber-security training castle</text>
+</svg>

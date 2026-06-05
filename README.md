@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="public/img/castle-banner.svg" alt="Hacker Castle" width="820">
+</p>
+
 # 🏰 Hacker Castle
 
 A pixel-art cyber-security training environment for school children (ages 8–16).
@@ -5,8 +9,7 @@ A single Docker container exposes a fun, game-styled website. Outside the castle
 is the landing page; inside (coming later) are challenge "rooms" and a notice
 board of scores.
 
-This repo is the **skeleton starting point** plus **three landing-page themes**
-to choose from.
+This repo is the **skeleton starting point** for the castle.
 
 ## Tech stack
 
