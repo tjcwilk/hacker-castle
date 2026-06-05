@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hacker Castle</title>
+
+  <!-- Pixel fonts. "Press Start 2P" = chunky arcade headings, "VT323" = retro
+       terminal body text. Loaded from Google Fonts for now; we can self-host
+       them later so the castle works fully offline in an isolated lab. -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="/css/landing.css" />
+</head>
+<body>
+
+  <!-- The castle's signature look: a synthwave-coloured terminal. Purple sky
+       with a warm sunset glow, neon grid floor, CRT scanlines, and a glitching
+       title. The castle itself is built from CSS blocks (see landing.js). -->
+  <main class="landing">
+    <div class="grid-floor" aria-hidden="true"></div>
+
+    <div class="landing__inner">
+      <header class="titleblock">
+        <p class="kicker">root@castle:~$ ./open_gate.sh</p>
+        <h1 class="title glitch" data-text="HACKERCASTLE">HACKER<span>CASTLE</span></h1>
+      </header>
+
+      <!-- castle injected here by landing.js -->
+      <div class="castle-mount"></div>
+
+      <button class="enter-btn" data-enter>&gt; Enter the Castle</button>
+
+      <!-- Shown once a nickname is saved (remembered across refreshes). -->
+      <div class="player-status" id="player-status" hidden>
+        <p class="player-line">Playing as <span id="player-name"></span></p>
+        <button type="button" class="action" data-change>change name</button>
+        <button type="button" class="action action--run" data-leave>run away</button>
+      </div>
+    </div>
+
+    <!-- CRT scanline overlay sits on top of everything. -->
+    <div class="scanlines" aria-hidden="true"></div>
+  </main>
+
+  <!-- The gate: a small overlay where a student types their handle. This calls
+       the real /api/enter endpoint, proving the front-end <-> server <->
+       database chain works end to end. -->
+  <div class="gate-overlay" id="gate" hidden>
+    <div class="gate-card">
+      <!-- State A: type (or change) your nickname -->
+      <div id="gate-entry">
+        <h2 id="gate-entry-title">Who approaches the castle?</h2>
+        <p class="gate-hint">Pick a nickname, brave hacker.</p>
+        <form id="gate-form">
+          <input id="nickname" name="nickname" maxlength="24" autocomplete="off"
+                 placeholder="e.g. n1ght_owl" required />
+          <div class="gate-actions">
+            <button type="button" id="gate-cancel" class="ghost">Back</button>
+            <button type="submit">Enter &gt;</button>
+          </div>
+        </form>
+        <p class="gate-result" id="gate-result" role="status"></p>
+      </div>
+
+      <!-- State B: greeting, with the option to change name -->
+      <div id="gate-greeting" hidden>
+        <h2 id="greeting-text">Welcome!</h2>
+        <div class="gate-actions">
+          <button type="button" id="gate-change" class="ghost">Change name</button>
+          <button type="button" id="gate-continue">Enter the Castle &gt;</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/landing.js"></script>
+</body>
+</html>

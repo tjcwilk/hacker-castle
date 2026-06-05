@@ -1,0 +1,24 @@
+# Dependencies
+node_modules/
+
+# The SQLite database is re-created fresh on every boot — never commit it.
+# (castle.db plus any transient -journal side-file.)
+castle.db*
+
+# Logs
+*.log
+npm-debug.log*
+
+# Environment / secrets
+.env
+.env.*
+
+# OS / editor cruft
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+
+# Local Claude Code settings (machine-specific)
+.claude/settings.local.json

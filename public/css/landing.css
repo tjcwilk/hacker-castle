@@ -1,0 +1,333 @@
+/* ==========================================================================
+   Hacker Castle — signature theme: "Synthwave Terminal".
+   A glitching CRT terminal in 80s synthwave colours (purple / pink / orange),
+   with a neon grid floor and scanlines. The castle is drawn from CSS blocks,
+   so no image assets are needed. Pixel look = blocky shapes + pixel fonts.
+
+   The :root palette below is the castle's shared identity. Future pages
+   (inside the castle, the challenge rooms) should reuse these variables so the
+   whole site looks like one place.
+   ========================================================================== */
+
+:root {
+  --font-head: 'Press Start 2P', monospace;
+  --font-body: 'VT323', monospace;
+
+  /* Synthwave palette */
+  --c-purple-deep: #1a0033;
+  --c-purple:      #3d0a5b;
+  --c-magenta:     #ff2e88;
+  --c-orange:      #ff7a3c;
+  --c-yellow:      #ffe14d;
+  --c-cyan:        #29e7ff;
+  --c-text:        #f6e9ff;
+
+  /* Castle stone — cool indigo so it separates from the purple sky */
+  --stone:       #514a85;
+  --stone-light: #6a63a6;  /* top-edge highlight */
+  --stone-dark:  #211a47;  /* outlines + recesses */
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+  background: var(--c-purple-deep);
+  color: var(--c-text);
+  font-family: var(--font-body);
+  image-rendering: pixelated;        /* keep pixel edges crisp */
+  -webkit-font-smoothing: none;
+}
+
+/* --- The scene ----------------------------------------------------------- */
+.landing {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  /* Purple sky with a warm sunset glow rising from the horizon (no sun). */
+  background:
+    radial-gradient(85% 55% at 50% 102%,
+      rgba(255, 122, 60, 0.55) 0%,
+      rgba(255, 46, 136, 0.28) 34%,
+      transparent 70%),
+    linear-gradient(180deg, #1a0033 0%, #2a0a47 46%, #3d0a5b 72%, #1a0033 100%);
+}
+
+.landing__inner {
+  position: relative;
+  z-index: 3;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(1.5rem, 4vmin, 3rem);
+  padding: 4vmin;
+  text-align: center;
+}
+
+/* --- Title block --------------------------------------------------------- */
+.titleblock { display: grid; gap: 1rem; }
+
+.kicker {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: clamp(1rem, 2.4vmin, 1.5rem);
+  letter-spacing: 0.12em;
+  color: var(--c-orange);
+  text-shadow: 0 0 8px rgba(255, 122, 60, 0.7);
+}
+
+.title {
+  margin: 0;
+  font-family: var(--font-head);
+  font-size: clamp(1.6rem, 7vmin, 5rem);
+  line-height: 1.15;
+  letter-spacing: 0.04em;
+  color: #fff;
+  text-shadow: 0 0 18px var(--c-magenta);
+}
+.title span { display: block; }
+
+.tagline {
+  margin: 0;
+  font-size: clamp(1.1rem, 3vmin, 2rem);
+  letter-spacing: 0.1em;
+  color: var(--c-yellow);
+  text-shadow: 0 0 8px rgba(255, 122, 60, 0.6);
+}
+
+/* --- Glitch effect on the title ----------------------------------------- */
+.glitch { position: relative; }
+.glitch::before, .glitch::after {
+  content: attr(data-text);
+  position: absolute; inset: 0;
+}
+.glitch::before { color: var(--c-magenta); transform: translate(-2px, 0); animation: glitch1 2.2s steps(2) infinite; }
+.glitch::after  { color: var(--c-cyan);    transform: translate(2px, 0);  animation: glitch2 2.6s steps(2) infinite; }
+@keyframes glitch1 { 0%,90%,100%{clip-path:inset(0 0 100% 0)} 92%{clip-path:inset(20% 0 40% 0)} 96%{clip-path:inset(60% 0 10% 0)} }
+@keyframes glitch2 { 0%,88%,100%{clip-path:inset(100% 0 0 0)} 90%{clip-path:inset(50% 0 30% 0)} 94%{clip-path:inset(10% 0 70% 0)} }
+
+/* --- Enter button -------------------------------------------------------- */
+.enter-btn {
+  font-family: var(--font-head);
+  font-size: clamp(0.7rem, 1.8vmin, 1rem);
+  padding: 1.1em 1.6em;
+  cursor: pointer;
+  color: #1a0033;
+  background: linear-gradient(180deg, var(--c-yellow), var(--c-orange) 55%, var(--c-magenta));
+  border: 0;
+  box-shadow: 6px 6px 0 #7a0a52, 0 0 22px rgba(255, 46, 136, 0.6);
+  transition: transform 0.08s steps(2), box-shadow 0.08s steps(2);
+}
+.enter-btn:active {
+  transform: translate(4px, 4px);
+  box-shadow: 2px 2px 0 #7a0a52, 0 0 22px rgba(255, 46, 136, 0.6);
+}
+
+/* --- "Playing as ..." status + actions under the hero button ------------- */
+.player-status {
+  text-align: left;                       /* so the indented actions line up */
+  font-size: clamp(1rem, 2.2vmin, 1.3rem);
+  letter-spacing: 0.05em;
+}
+.player-line { margin: 0 0 0.35em; color: var(--c-cyan); }
+.player-line #player-name { color: var(--c-yellow); font-weight: bold; }
+
+/* Each action sits on its own indented line, prefixed with a ">" so it's
+   obviously something you can click. */
+.action {
+  display: block;
+  margin: 0.2em 0 0 1.2em;                /* slight indent */
+  padding: 0;
+  font-family: var(--font-body);
+  font-size: inherit;
+  color: var(--c-magenta);
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+.action::before { content: '> '; color: var(--c-cyan); }
+.action:hover { color: var(--c-orange); }
+.action--run { color: var(--c-orange); }
+.action--run:hover { color: var(--c-magenta); }
+
+/* --- Neon grid floor ----------------------------------------------------- */
+.grid-floor {
+  position: absolute; left: -25%; right: -25%; bottom: 0; height: 34%; z-index: 1;
+  background-image:
+    linear-gradient(var(--c-cyan) 2px, transparent 2px),
+    linear-gradient(90deg, var(--c-magenta) 2px, transparent 2px);
+  background-size: 52px 52px;
+  transform: perspective(200px) rotateX(64deg);
+  transform-origin: bottom center;
+  opacity: 0.55;
+  /* Fade the grid out toward the horizon. */
+  -webkit-mask: linear-gradient(180deg, transparent 0%, #000 55%);
+          mask: linear-gradient(180deg, transparent 0%, #000 55%);
+}
+
+/* --- CRT scanlines + flicker --------------------------------------------- */
+.scanlines {
+  position: absolute; inset: 0; z-index: 4; pointer-events: none;
+  background: repeating-linear-gradient(0deg, rgba(0,0,0,0.28) 0 2px, transparent 2px 4px);
+  animation: flicker 4s steps(60) infinite;
+}
+@keyframes flicker { 97% { opacity: 1; } 98% { opacity: 0.72; } 99% { opacity: 1; } }
+
+/* ==========================================================================
+   THE CASTLE  (built from blocks; injected by landing.js)
+   ========================================================================== */
+.castle {
+  --accent: var(--c-cyan);     /* glowing windows */
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  /* A crisp cyan neon edge on all four sides, a close cyan glow, a wider
+     magenta halo, and a soft ground shadow — makes the castle pop off the
+     purple sky instead of blending in. */
+  filter:
+    drop-shadow( 2px 0 0 var(--c-cyan))
+    drop-shadow(-2px 0 0 var(--c-cyan))
+    drop-shadow(0  2px 0 var(--c-cyan))
+    drop-shadow(0 -2px 0 var(--c-cyan))
+    drop-shadow(0 0 14px var(--c-cyan))
+    drop-shadow(0 0 26px rgba(255, 46, 136, 0.45))
+    drop-shadow(0 14px 12px rgba(0, 0, 0, 0.55));
+}
+
+.castle .tower,
+.castle .wall {
+  position: relative;
+  background: var(--stone);
+  border: 3px solid var(--stone-dark);
+  /* Lit top edge + shaded inner-bottom give the blocks 3D definition. */
+  box-shadow:
+    inset 0  4px 0 var(--stone-light),
+    inset 0 -10px 14px rgba(0, 0, 0, 0.35);
+}
+
+/* Crenellations (the notched top) drawn with a repeating gradient. */
+.castle .tower::before,
+.castle .wall::before {
+  content: '';
+  position: absolute;
+  left: -3px; right: -3px;
+  top: -15px;
+  height: 15px;
+  background:
+    repeating-linear-gradient(90deg,
+      var(--stone) 0, var(--stone) 14px,
+      transparent 14px, transparent 28px);
+  border-top: 3px solid var(--stone-dark);
+}
+
+.castle .tower {
+  width: clamp(46px, 9vmin, 80px);
+  height: clamp(130px, 26vmin, 230px);
+}
+.castle .tower--main {
+  width: clamp(70px, 13vmin, 120px);
+  height: clamp(170px, 34vmin, 300px);
+}
+.castle .wall {
+  width: clamp(54px, 11vmin, 100px);
+  height: clamp(90px, 18vmin, 160px);
+  z-index: -1;
+}
+
+/* Glowing windows. */
+.castle .window {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 26%;
+  height: 16%;
+  background: var(--accent);
+  box-shadow: 0 0 12px var(--accent);
+}
+.castle .window.w1 { top: 22%; }
+.castle .window.w2 { top: 50%; }
+
+/* Arched gate on the main tower. */
+.castle .gate {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  transform: translateX(-50%);
+  width: 52%;
+  height: 46%;
+  background: var(--stone-dark);
+  border-radius: 50% 50% 0 0 / 70% 70% 0 0;
+  box-shadow: inset 0 0 0 4px rgba(0, 0, 0, 0.35);
+  /* Portcullis bars. */
+  background-image:
+    repeating-linear-gradient(90deg, transparent 0 8px, rgba(0,0,0,0.4) 8px 11px),
+    repeating-linear-gradient(0deg, transparent 0 10px, rgba(0,0,0,0.4) 10px 13px);
+}
+
+/* Flag on the tallest tower (orange, to add a pop of colour). */
+.castle .flagpole {
+  position: absolute;
+  top: -52px; left: 50%;
+  width: 4px; height: 52px;
+  background: var(--stone-dark);
+  transform: translateX(-50%);
+}
+.castle .flag {
+  position: absolute;
+  top: 0; left: 4px;
+  width: 34px; height: 22px;
+  background: var(--c-orange);
+  box-shadow: 0 0 14px var(--c-orange);
+  animation: wave 0.9s steps(3) infinite alternate;
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%, 18% 50%);
+}
+@keyframes wave { from { transform: scaleX(1); } to { transform: scaleX(0.82); } }
+
+/* ==========================================================================
+   GATE overlay (handle entry -> calls the real API)
+   ========================================================================== */
+.gate-overlay {
+  position: fixed; inset: 0; z-index: 30;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(10, 0, 24, 0.78);
+}
+.gate-overlay[hidden] { display: none; }
+.gate-card {
+  width: min(92vw, 420px);
+  padding: 28px;
+  background: #120826;
+  border: 3px solid var(--c-magenta);
+  box-shadow: 0 0 0 6px var(--c-purple-deep), 0 0 30px var(--c-magenta);
+  text-align: center;
+}
+.gate-card h2 {
+  font-family: var(--font-head);
+  font-size: 0.85rem; line-height: 1.5; color: #fff; margin: 0 0 8px;
+}
+.gate-hint { color: var(--c-cyan); font-size: 1.2rem; margin: 0 0 18px; }
+#handle {
+  width: 100%; padding: 12px; font-family: var(--font-body); font-size: 1.4rem;
+  color: var(--c-text); background: var(--c-purple-deep);
+  border: 2px solid var(--c-cyan); outline: none;
+}
+#handle:focus { box-shadow: 0 0 12px var(--c-cyan); }
+.gate-actions { display: flex; gap: 10px; margin-top: 16px; }
+.gate-actions button {
+  flex: 1; padding: 12px; cursor: pointer;
+  font-family: var(--font-head); font-size: 0.6rem;
+  color: #1a0033;
+  background: linear-gradient(180deg, var(--c-yellow), var(--c-orange));
+  border: 0; box-shadow: 4px 4px 0 #7a0a52;
+}
+.gate-actions button.ghost { background: #2a1247; color: #fff; box-shadow: 4px 4px 0 #11061f; }
+.gate-actions button:active { transform: translate(2px,2px); }
+.gate-result { min-height: 1.4em; margin: 14px 0 0; font-size: 1.3rem; color: var(--c-yellow); }
+
+/* Respect users who prefer less motion. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; }
+}
