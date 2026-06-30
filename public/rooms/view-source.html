@@ -48,8 +48,11 @@
     .mag__sparkle--1 { top: 0.1em; right: 1.4em; }
     .mag__sparkle--2 { top: 3.2em; left: -0.1em; animation-delay: 0.55s; }
     .mag__sparkle--3 { top: 1.5em; right: -0.2em; animation-delay: 1.1s; }
-    .mag__hint { position: absolute; bottom: -0.6em; left: 50%; transform: translateX(-50%); white-space: nowrap;
-      font-family: var(--font-ui, sans-serif); font-size: 0.55em; color: #f0e0ff; text-shadow: 0 0 6px #000; }
+    .mag__hint { position: absolute; bottom: -2em; left: 50%; transform: translateX(-50%); white-space: nowrap;
+      font-family: var(--font-ui, sans-serif); font-size: 1.05em; color: #ffe066;
+      text-shadow: 0 0 8px #000, 0 0 18px rgba(255,200,60,0.7);
+      animation: hint-pulse 1.9s ease-in-out infinite; letter-spacing: 0.03em; }
+    @keyframes hint-pulse { 0%,100% { opacity: 0.8; } 50% { opacity: 1; text-shadow: 0 0 8px #000, 0 0 28px #ffe066, 0 0 42px rgba(255,200,60,0.5); } }
     @keyframes sparkle { 0%,100% { opacity: 0; transform: scale(0.5); } 50% { opacity: 1; transform: scale(1.25); } }
     @keyframes mag-float { from { transform: translateY(0) rotate(-2deg); } to { transform: translateY(-6%) rotate(-2deg); } }
 
